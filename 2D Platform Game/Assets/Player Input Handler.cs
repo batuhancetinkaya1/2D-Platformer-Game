@@ -3,12 +3,10 @@ using UnityEngine;
 public class PlayerInputHandler : MonoBehaviour
 {
     private PlayerMoveHandler moveHandler;
-    private PlayerAnimControl animController;
 
     private void Awake()
     {
         moveHandler = GetComponent<PlayerMoveHandler>();
-        animController = GetComponent<PlayerAnimControl>();
     }
 
     private void Update()
@@ -41,7 +39,7 @@ public class PlayerInputHandler : MonoBehaviour
             moveHandler.HandleBlock(false);
 
 
-        //// Special Action Inputs
+        //// Death and Hurt 
         //if (Input.GetKeyDown("e"))
         //    animController.HandleDeath();
 
