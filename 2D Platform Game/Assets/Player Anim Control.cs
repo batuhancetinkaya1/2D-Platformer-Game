@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerAnimControl : MonoBehaviour
 {
     private Animator m_animator;
+    private PlayerType playerType;
 
     private void Start()
     {
@@ -42,6 +43,11 @@ public class PlayerAnimControl : MonoBehaviour
     public void SetTriggerBlock()
     {
         m_animator.SetTrigger("Block");
+    }
+
+    public void SetTriggerBlocked()
+    {
+        m_animator.SetTrigger("Blocked");
     }
 
     public void SetIdleBlock(bool isBlocking)

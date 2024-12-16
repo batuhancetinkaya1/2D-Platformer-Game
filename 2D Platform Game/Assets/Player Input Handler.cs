@@ -1,12 +1,22 @@
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    private PlayerMoveHandler moveHandler;
+    private PlayerActionHandler actionHandler;
+    private PlayerType playerType;
+
+
+    [Header("Key Code Keyboard")]
+    [SerializeField] public KeyCode rightMoveButton, leftMoveButton, jumpButton, blockButton, attackButton, rollButton;
+
+    [Header("Key Code Joystick")]
+    [SerializeField] public KeyCode JoyStick_rightMoveButton, JoyStick_leftMoveButton, JoyStick_jumpButton, JoyStick_blockButton, JoyStick_attackButton, JoyStick_rollButton;
 
     private void Awake()
     {
-        moveHandler = GetComponent<PlayerMoveHandler>();
+        actionHandler = GetComponent<PlayerActionHandler>();
+        playerType = actionHandler.playerType;
     }
 
     private void Update()
@@ -16,34 +26,34 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void GetInput()
     {
-        // Horizontal Movement Input
-        float horizontalInput = Input.GetAxis("Horizontal");
-        moveHandler.HandleHorizontalMovement(horizontalInput);
+        // Horizontal Movement Input (Keyboard or Joystick)
+        float horizontalInput = 0f;
 
-        // Jump Input
-        if (Input.GetKeyDown("space"))
-            moveHandler.HandleJump();
+        // Horizontal Movement: Keyboard or Joystick
+        if (Input.GetKey(rightMoveButton) || Input.GetKey(JoyStick_rightMoveButton))  // Right move
+            horizontalInput = 1f;
+        else if (Input.GetKey(leftMoveButton) || Input.GetKey(JoyStick_leftMoveButton))  // Left move
+            horizontalInput = -1f;
 
-        // Roll Input
-        else if (Input.GetKeyDown("left shift"))
-            moveHandler.HandleRoll();
+        actionHandler.HandleHorizontalMovement(horizontalInput);
 
-        // Attack Input
-        else if (Input.GetMouseButtonDown(0))
-            moveHandler.HandleAttack();
+        // Jump Input (Keyboard or Joystick)
+        if (Input.GetKeyDown(jumpButton) || Input.GetKeyDown(JoyStick_jumpButton))
+            actionHandler.HandleJump();
 
-        // Block Input
-        else if (Input.GetMouseButtonDown(1))
-            moveHandler.HandleBlock(true);
-        else if (Input.GetMouseButtonUp(1))
-            moveHandler.HandleBlock(false);
+        // Roll Input (Keyboard or Joystick)
+        if (Input.GetKeyDown(rollButton) || Input.GetKeyDown(JoyStick_rollButton))
+            actionHandler.HandleRoll();
 
+        // Attack Input (Keyboard or Joystick)
+        if (Input.GetKeyDown(attackButton) || Input.GetKeyDown(JoyStick_attackButton))  // Mouse click or joystick button
+            actionHandler.HandleAttack();
 
-        //// Death and Hurt 
-        //if (Input.GetKeyDown("e"))
-        //    animController.HandleDeath();
-
-        //if (Input.GetKeyDown("q"))
-        //    animController.HandleHurt();
+        // Block Input (Keyboard or Joystick)
+        if (Input.GetKeyDown(blockButton) || Input.GetKeyDown(JoyStick_blockButton))  // Mouse right click or joystick button
+            actionHandler.HandleBlock(true);
+        else if (Input.GetMouseButtonUp(1) || Input.GetKeyUp(JoyStick_blockButton))  // Mouse right click or joystick button
+            actionHandler.HandleBlock(false);
     }
+
 }
