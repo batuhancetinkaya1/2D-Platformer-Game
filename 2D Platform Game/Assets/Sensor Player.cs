@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class SensorPlayer : MonoBehaviour {
-
+public class SensorPlayer : MonoBehaviour
+{
     private int m_ColCount = 0;
-
     private float m_DisableTimer;
+
+    public Collider2D LastCollider { get; private set; }  // Add this line to expose the last collider
 
     private void OnEnable()
     {
         m_ColCount = 0;
+        LastCollider = null;
     }
 
     public bool State()
@@ -22,11 +23,14 @@ public class SensorPlayer : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         m_ColCount++;
+        LastCollider = other;  // Track the collider that entered
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
         m_ColCount--;
+        if (m_ColCount <= 0)
+            LastCollider = null;  // Reset when no colliders are inside
     }
 
     void Update()

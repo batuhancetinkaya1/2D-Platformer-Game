@@ -19,6 +19,7 @@ public class PlayerActionHandler : MonoBehaviour
     private SensorPlayer m_wallSensorR2;
     private SensorPlayer m_wallSensorL1;
     private SensorPlayer m_wallSensorL2;
+    private SensorPlayer m_meleeRangeSensor;
     private SpriteRenderer m_spriteRenderer;
 
     private bool m_isWallSliding = false;
@@ -26,6 +27,7 @@ public class PlayerActionHandler : MonoBehaviour
     private bool m_rolling = false;
     private bool m_wallJumping = false;
     private bool m_isBlocking = false;
+    
     private int m_facingDirection = 1;
     private int m_currentAttack = 0;
     private float m_timeSinceAttack = 0.0f;
@@ -33,8 +35,12 @@ public class PlayerActionHandler : MonoBehaviour
     private float m_rollCurrentTime;
     private float m_wallJumpingCurrentTime = 0.0f;
     private float m_wallStickCounter = 0f;
-    private float m_health;
     private int m_wallSlidingSide = 0;
+
+    public float m_health = 100f;
+    public bool m_meleeRangeisActive = false;
+    private float m_baseDamage = 10f;
+    private float m_thirdAttackDamge = 15f;
 
     private void Awake()
     {
@@ -47,6 +53,7 @@ public class PlayerActionHandler : MonoBehaviour
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<SensorPlayer>();
         m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<SensorPlayer>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<SensorPlayer>();
+        m_meleeRangeSensor = transform.Find("MeleeRange").GetComponent<SensorPlayer>();
     }
 
     private void Update()
@@ -71,6 +78,7 @@ public class PlayerActionHandler : MonoBehaviour
 
         CheckGroundedStatus();
         HandleWallSlide();
+        CheckMeleeRange();
 
         playerAnimControl.SetAirSpeedY(m_body2d.velocity.y);
     }
@@ -126,6 +134,19 @@ public class PlayerActionHandler : MonoBehaviour
         playerAnimControl.SetWallSliding(m_isWallSliding);
     }
 
+
+    private void CheckMeleeRange()
+    {
+        if (m_meleeRangeSensor.State())
+        {
+            m_meleeRangeisActive = true;
+        }
+        if (!m_meleeRangeSensor.State())
+        {
+            m_meleeRangeisActive = false;
+        }
+    }
+
     public void HandleHorizontalMovement(float inputX)
     {
         if (m_isWallSliding)
@@ -148,11 +169,13 @@ public class PlayerActionHandler : MonoBehaviour
         if (inputX > 0)
         {
             m_spriteRenderer.flipX = false;
+            m_meleeRangeSensor.transform.localScale = new Vector2(1, 1);
             m_facingDirection = 1;
         }
         else if (inputX < 0)
         {
             m_spriteRenderer.flipX = true;
+            m_meleeRangeSensor.transform.localScale = new Vector2(-1, 1);
             m_facingDirection = -1;
         }
 
@@ -166,6 +189,7 @@ public class PlayerActionHandler : MonoBehaviour
     {
         if (m_grounded && !m_rolling)
         {
+            Debug.Log("!");
             PerformJump(m_jumpForce);
         }
         else if (m_isWallSliding)
@@ -176,6 +200,7 @@ public class PlayerActionHandler : MonoBehaviour
 
     private void PerformJump(float jumpForce)
     {
+        Debug.Log("!");
         playerAnimControl.SetTriggerJump();
         m_grounded = false;
         playerAnimControl.SetGrounded(m_grounded);
@@ -260,7 +285,28 @@ public class PlayerActionHandler : MonoBehaviour
                 m_currentAttack = 1;
 
             playerAnimControl.SetTriggerAttack(m_currentAttack);
+            if (m_meleeRangeisActive)
+            {
+                HandleGiveDamage(m_currentAttack);
+            }
             m_timeSinceAttack = 0.0f;
+        }
+    }
+
+    private void HandleGiveDamage(int currentAttackState)
+    {
+        float damage = currentAttackState < 3 ? m_baseDamage : m_thirdAttackDamge;
+
+        if (m_meleeRangeSensor.LastCollider != null &&
+            m_meleeRangeSensor.LastCollider.CompareTag("Player"))
+        {
+            PlayerActionHandler targetPlayer =
+                m_meleeRangeSensor.LastCollider.GetComponent<PlayerActionHandler>();
+
+            if (targetPlayer != null && targetPlayer.playerType != playerType)
+            {
+                targetPlayer.GetDamage(damage, this.transform); // Pass attacker's transform
+            }
         }
     }
 
@@ -286,29 +332,37 @@ public class PlayerActionHandler : MonoBehaviour
         }
     }
 
-    public void GetDamage(float damage)
+    public void GetDamage(float damage, Transform attackerTransform)
     {
-        if (m_isBlocking)
+        // Determine if attack is coming from the front
+        bool isFacingAttack = (attackerTransform.position.x - transform.position.x) * m_facingDirection > 0;
+
+        if (m_isBlocking && isFacingAttack)
         {
+            Debug.Log("Hit Blocked - Reduced Damage");
             m_health -= damage / 5;
-            //Settrigger blocked
+            playerAnimControl.SetTriggerBlocked(); // Trigger blocked animation
         }
         else
         {
+            Debug.Log("Hit Taken - Full Damage");
             m_health -= damage;
-            //hurt
+            playerAnimControl.HandleHurt(); // Trigger hurt animation
         }
 
-        if(m_health <= 0)
+        // Check for death
+        if (m_health <= 0)
         {
+            Debug.Log("Player Died");
             Die();
         }
     }
 
+
     public void Die()
     {
-        //die
-        //m_isAlive
+        playerAnimControl.HandleDeath(); // Trigger death animation
+        //gameObject.SetActive(false);     // Disable player object (optional)
     }
 
     public void AE_SlideDust()
