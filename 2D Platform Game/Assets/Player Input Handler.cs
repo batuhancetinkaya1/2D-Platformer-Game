@@ -34,6 +34,11 @@ public class PlayerInputHandler : MonoBehaviour
             horizontalInput = 1f;
         else if (Input.GetKey(leftMoveButton) || Input.GetKey(JoyStick_leftMoveButton))  // Left move
             horizontalInput = -1f;
+        else if (!Input.GetKey(rightMoveButton) && !Input.GetKey(leftMoveButton) &&
+            !Input.GetKey(JoyStick_rightMoveButton) && !Input.GetKey(JoyStick_leftMoveButton))
+        {
+            horizontalInput = 0f;
+        }
 
         actionHandler.HandleHorizontalMovement(horizontalInput);
 

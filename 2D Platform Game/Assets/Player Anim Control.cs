@@ -50,6 +50,11 @@ public class PlayerAnimControl : MonoBehaviour
         m_animator.SetTrigger("Blocked");
     }
 
+    public void SetTriggerEdgeGrab()
+    {
+        m_animator.SetTrigger("Edge Grab");
+    }
+
     public void SetIdleBlock(bool isBlocking)
     {
         m_animator.SetBool("IdleBlock", isBlocking);
