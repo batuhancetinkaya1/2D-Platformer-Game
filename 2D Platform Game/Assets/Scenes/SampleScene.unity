@@ -9223,7 +9223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4448120422748292660, guid: a6eb7030430a3a843b64b04edff8e0a4, type: 3}
       propertyPath: m_health
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 4448120422748292660, guid: a6eb7030430a3a843b64b04edff8e0a4, type: 3}
       propertyPath: m_rollForce

@@ -17,7 +17,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected bool m_playerDetected = false;
     protected bool m_isDead = false;
-    protected bool m_isAttacking = false; // Saldýrý sýrasýnda kontrol için
+    protected bool m_isAttacking = false;
 
     // Devriye deðiþkenleri
     protected bool m_isIdle = false;
@@ -26,6 +26,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     // Oyuncu algýlama mesafesi
     public float m_detectionDistance = 5f;
+
+    protected Coroutine m_currentAttackCoroutine; // Aktif saldýrý coroutine'i
 
     protected virtual void Awake()
     {
@@ -69,7 +71,12 @@ public abstract class EnemyBase : MonoBehaviour
 
         if (m_isAttacking)
         {
-            // Saldýrýyý iptal et
+            // Eðer saldýrý coroutine'i çalýþýyorsa iptal et
+            if (m_currentAttackCoroutine != null)
+            {
+                StopCoroutine(m_currentAttackCoroutine);
+                m_currentAttackCoroutine = null;
+            }
             m_animator.ResetTrigger("Attack1");
             m_animator.ResetTrigger("Attack2");
             m_isAttacking = false;

@@ -8,6 +8,7 @@ public class UnifiedEnemy : EnemyBase
     public float m_meleeRange = 1.5f;
 
     private float m_lastAttackTime;
+    private bool m_useAttack1 = true; // Attack1 ve Attack2 arasýnda geçiþ yapmak için kontrol deðiþkeni
 
     protected override void Start()
     {
@@ -113,15 +114,23 @@ public class UnifiedEnemy : EnemyBase
         m_isAttacking = true;
         m_lastAttackTime = Time.time;
 
-        m_animator.SetTrigger("Attack1");
+        // Attack1 ve Attack2 arasýnda geçiþ yap
+        string attackAnimation = m_useAttack1 ? "Attack1" : "Attack2";
+        m_useAttack1 = !m_useAttack1;
 
-        StartCoroutine(PerformMeleeDamage());
+        m_animator.SetTrigger(attackAnimation);
+
+        m_currentAttackCoroutine = StartCoroutine(PerformMeleeDamage());
     }
 
     private IEnumerator PerformMeleeDamage()
     {
-        yield return new WaitForSeconds(0.5f);
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
 
+        // Animasyonun tamamlanmasýný bekle
+        yield return new WaitForSeconds(stateInfo.length);
+
+        // Hasar verme iþlemi
         foreach (var collider in m_meleeRangeSensor.Colliders)
         {
             if (collider.CompareTag("Player"))
@@ -144,19 +153,23 @@ public class UnifiedEnemy : EnemyBase
 
         m_animator.SetTrigger("Attack2");
 
-        StartCoroutine(PerformFlyingEyeMeleeDamage());
+        m_currentAttackCoroutine = StartCoroutine(PerformFlyingEyeMeleeDamage());
     }
 
     private IEnumerator PerformFlyingEyeMeleeDamage()
     {
-        yield return new WaitForSeconds(0.5f);
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
 
+        // Animasyonun tamamlanmasýný bekle
+        yield return new WaitForSeconds(stateInfo.length);
+
+        // Hasar verme iþlemi
         foreach (var collider in m_meleeRangeSensor.Colliders)
         {
             if (collider.CompareTag("Player"))
             {
                 PlayerActionHandler player = collider.GetComponent<PlayerActionHandler>();
-                player?.GetDamage(5f); // Flying Eye melee damage
+                player?.GetDamage(5f);
             }
         }
 
@@ -173,8 +186,12 @@ public class UnifiedEnemy : EnemyBase
 
         m_animator.SetTrigger("Attack1");
 
-        yield return new WaitForSeconds(0.5f);
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
 
+        // Animasyonun tamamlanmasýný bekle
+        yield return new WaitForSeconds(stateInfo.length);
+
+        // Fireball oluþturma
         Vector3 fireballSpawnPosition = transform.position + Vector3.right * m_facingDirection;
         GameObject fireball = Instantiate(m_fireballPrefab, fireballSpawnPosition, Quaternion.identity);
         fireball.GetComponent<Fireball>().m_attackerfaceDirection = m_facingDirection;
@@ -184,19 +201,41 @@ public class UnifiedEnemy : EnemyBase
 
     protected override IEnumerator Die()
     {
-        m_isDead = true;
-
-        m_animator.ResetTrigger("Attack1");
-        m_animator.ResetTrigger("Attack2");
-
+        m_isDead = true; // Düþman öldü
         m_animator.SetTrigger("Death");
+
+        // Animasyon bilgisi al
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
 
         m_rb.velocity = Vector2.zero;
         m_rb.gravityScale = 1;
         transform.Find("MeleeRangeSensor").gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(m_animator.GetCurrentAnimatorStateInfo(0).length);
+        // Collider ayarlarýný düzenle (varsa)
+        if (m_enemyType == EnemyType.FlyingEye)
+        {
+            CapsuleCollider2D colliderToChange = GetComponent<CapsuleCollider2D>();
+            if (colliderToChange != null)
+            {
+                colliderToChange.offset = new Vector2(0.05f, -0.15f);
+                colliderToChange.size = new Vector2(0.1f, 0.1f);
+            }
+        }
+        else if (m_enemyType == EnemyType.Mushroom)
+        {
+            BoxCollider2D colliderToChange = GetComponent<BoxCollider2D>();
+            if (colliderToChange != null)
+            {
+                colliderToChange.offset = new Vector2(0.0015f, -0.2579f);
+                colliderToChange.size = new Vector2(0.03f, 0.005f);
+            }
+        }
 
+        // Animasyonun bitmesini bekle
+        yield return new WaitForSeconds(stateInfo.length);
+
+        // Düþman bileþenlerini devre dýþý býrak
         this.enabled = false;
     }
+
 }
