@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5085219809302509610}
   - component: {fileID: 7593353590500610434}
   - component: {fileID: 3073849183085695278}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FireBallPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,6 +155,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ad7fad86b9847042ad27adb529d2994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  damage: 10
-  attackerTransform: {fileID: 0}
+  m_speed: 2
+  m_damage: 10
+  m_attackerfaceDirection: 0

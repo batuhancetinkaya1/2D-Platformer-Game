@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,9 +41,11 @@ public class PlayerActionHandler : MonoBehaviour
     private int m_wallSlidingSide = 0;
 
 
+    public bool isStuck = false;
     private Slider m_healthSlider;
     public Image m_fillImage;
-    public float m_health = 100f;
+    private float m_health;
+    public float m_maxHealth = 500f;
     public bool m_meleeRangeisActive = false;
     private float m_baseDamage = 10f;
     private float m_thirdAttackDamge = 15f;
@@ -62,8 +65,9 @@ public class PlayerActionHandler : MonoBehaviour
 
         m_healthSlider = transform.Find("Canvas/HealthBar").GetComponent<Slider>();
         m_fillImage = m_healthSlider.fillRect.GetComponent<Image>(); // Slider üzerinden eriþim
-        m_healthSlider.maxValue = 100;
-        m_healthSlider.value = 100;
+        m_healthSlider.maxValue = m_maxHealth;
+        m_health = m_maxHealth;
+        m_healthSlider.value = m_health;
     }
 
     private void Update()
@@ -168,6 +172,12 @@ public class PlayerActionHandler : MonoBehaviour
         if (m_wallSensorL1.State() && !m_wallSensorL2.State() 
             || m_wallSensorR1.State() && !m_wallSensorR2.State())
             return;
+        if (!m_wallSensorL1.State() && !m_wallSensorL2.State() && !m_wallSensorR1.State() && !m_wallSensorR2.State() && !m_grounded && !m_isWallSliding && isStuck)
+            return;
+        if (!m_wallSensorL1.State() && m_wallSensorL2.State() && !m_grounded && !m_isWallSliding && isStuck
+            || !m_wallSensorR1.State() && m_wallSensorR2.State() && !m_grounded && !m_isWallSliding && isStuck)
+            return;
+
 
         if (m_isWallSliding)
         {
@@ -203,7 +213,6 @@ public class PlayerActionHandler : MonoBehaviour
             m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
 
         playerAnimControl.SetRunningState(inputX);
-        Debug.Log($"Horizontal Input: {inputX}");
     }
 
     public void HandleJump()
@@ -318,26 +327,35 @@ public class PlayerActionHandler : MonoBehaviour
     private void HandleGiveDamage(int currentAttackState)
     {
         float damage = currentAttackState < 3 ? m_baseDamage : m_thirdAttackDamge;
+        List<UnifiedEnemy> enemiesToHit = new List<UnifiedEnemy>();
 
-        if (m_meleeRangeSensor.LastCollider != null &&
-            m_meleeRangeSensor.LastCollider.CompareTag("Player"))
+        foreach (var collider in m_meleeRangeSensor.Colliders)
         {
-            PlayerActionHandler targetPlayer =
-                m_meleeRangeSensor.LastCollider.GetComponent<PlayerActionHandler>();
-
-            if (targetPlayer != null && targetPlayer.playerType != playerType)
+            if (collider.CompareTag("Player"))
             {
-                targetPlayer.GetDamage(damage, this.transform); // Pass attacker's transform
+                PlayerActionHandler targetPlayer = collider.GetComponent<PlayerActionHandler>();
+                if (targetPlayer != null && targetPlayer.playerType != playerType)
+                {
+                    targetPlayer.GetDamage(damage, this.transform); // Pass attacker's transform
+                }
+            }
+            else if (collider.CompareTag("Enemy"))
+            {
+                UnifiedEnemy targetEnemy = collider.GetComponent<UnifiedEnemy>();
+                if (targetEnemy != null)
+                {
+                    enemiesToHit.Add(targetEnemy);
+                    //targetEnemy.TakeDamage(damage);
+                }
             }
         }
-        else if(m_meleeRangeSensor.LastCollider != null &&
-            m_meleeRangeSensor.LastCollider.CompareTag("Enemy"))
+        foreach (var enemies in enemiesToHit)
         {
-            UnifiedEnemy targetEnemy = 
-                m_meleeRangeSensor.LastCollider.GetComponent<UnifiedEnemy>();
-            targetEnemy.TakeDamage(damage);
+            enemies.TakeDamage(damage);
         }
+        enemiesToHit.Clear();
     }
+
 
     public void HandleBlock(bool isBlocking)
     {
@@ -373,18 +391,16 @@ public class PlayerActionHandler : MonoBehaviour
 
         if (m_isBlocking && isFacingAttack)
         {
-            Debug.Log("Hit Blocked - Reduced Damage");
             m_health -= damage / 5;
             playerAnimControl.SetTriggerBlocked(); // Trigger blocked animation
         }
         else
         {
-            Debug.Log("Hit Taken - Full Damage");
             m_health -= damage;
             playerAnimControl.HandleHurt(); // Trigger hurt animation
         }
 
-        m_health = Mathf.Clamp(m_health, 0, 100);
+        m_health = Mathf.Clamp(m_health, 0, m_maxHealth);
         m_healthSlider.value = m_health;
 
         if (m_health <= 0)

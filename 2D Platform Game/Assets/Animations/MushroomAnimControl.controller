@@ -9,7 +9,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Run
+    m_ConditionEvent: Idle
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5637678178738059904}
@@ -34,7 +34,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 1
+    m_ConditionEvent: TakeHit
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2297646163649761365}
@@ -84,7 +84,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Idle
+  m_Name: Mushroom_Run
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -98,7 +98,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: f3cc9dd280f2be440b677baeba401ab3, type: 2}
+  m_Motion: {fileID: 7400000, guid: c8b1916a68d5f1b4abf7c4724ad255f5, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -113,7 +113,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Run
+    m_ConditionEvent: Idle
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 551627706433788992}
@@ -138,7 +138,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 5
+    m_ConditionEvent: Attack1
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8025908750521105586}
@@ -238,7 +238,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 3
+    m_ConditionEvent: Death
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4209737495524289736}
@@ -304,31 +304,31 @@ AnimatorController:
   m_Name: MushroomAnimControl
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: 1
+  - m_Name: Attack1
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: 3
+  - m_Name: Attack2
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: 4
+  - m_Name: TakeHit
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: 5
+  - m_Name: Death
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: Run
+  - m_Name: Idle
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -354,8 +354,8 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushromm_Run
-  m_Speed: 1.5
+  m_Name: Mushromm_Idle
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -9186268948756311404}
@@ -368,7 +368,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c8b1916a68d5f1b4abf7c4724ad255f5, type: 2}
+  m_Motion: {fileID: 7400000, guid: f3cc9dd280f2be440b677baeba401ab3, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -454,7 +454,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: 4
+    m_ConditionEvent: Attack2
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3960815453212385954}

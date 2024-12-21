@@ -45,7 +45,6 @@ public class PlayerInputHandler : MonoBehaviour
         // Jump Input (Keyboard or Joystick)
         if (Input.GetKeyDown(jumpButton) || Input.GetKeyDown(JoyStick_jumpButton))
         {
-            Debug.Log("!");
             actionHandler.HandleJump();
         }
            

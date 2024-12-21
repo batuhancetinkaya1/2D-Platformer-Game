@@ -1,36 +1,39 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SensorPlayer : MonoBehaviour
 {
-    private int m_ColCount = 0;
+    private List<Collider2D> m_Colliders = new List<Collider2D>(); // List to store colliders
     private float m_DisableTimer;
 
-    public Collider2D LastCollider { get; private set; }  // Add this line to expose the last collider
+    public List<Collider2D> Colliders => m_Colliders; // Expose the list of colliders
 
     private void OnEnable()
     {
-        m_ColCount = 0;
-        LastCollider = null;
+        m_Colliders.Clear();
     }
 
     public bool State()
     {
         if (m_DisableTimer > 0)
             return false;
-        return m_ColCount > 0;
+        return m_Colliders.Count > 0;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        m_ColCount++;
-        LastCollider = other;  // Track the collider that entered
+        if (!m_Colliders.Contains(other))
+        {
+            m_Colliders.Add(other); // Add collider to the list
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        m_ColCount--;
-        if (m_ColCount <= 0)
-            LastCollider = null;  // Reset when no colliders are inside
+        if (m_Colliders.Contains(other))
+        {
+            m_Colliders.Remove(other); // Remove collider from the list
+        }
     }
 
     void Update()
