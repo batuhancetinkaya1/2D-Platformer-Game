@@ -9991,7 +9991,7 @@ GameObject:
   - component: {fileID: 1453389407}
   - component: {fileID: 1453389409}
   - component: {fileID: 1453389408}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MeleeRangeSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

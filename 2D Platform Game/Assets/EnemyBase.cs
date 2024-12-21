@@ -16,13 +16,15 @@ public abstract class EnemyBase : MonoBehaviour
     public SensorPlayer m_meleeRangeSensor;
 
     protected bool m_playerDetected = false;
+    protected bool m_isDead = false;
+    protected bool m_isAttacking = false; // Saldýrý sýrasýnda kontrol için
 
-    // Devriye bekleme ile ilgili deðiþkenler
+    // Devriye deðiþkenleri
     protected bool m_isIdle = false;
     protected float m_idleTimer = 0f;
-    public float m_idleWaitTime = 1f; // Bekleme süresi
+    public float m_idleWaitTime = 1f;
 
-    // Oyuncu tespiti için ek bir mesafe: Oyuncu yakýndaysa düþman yaklaþýr.
+    // Oyuncu algýlama mesafesi
     public float m_detectionDistance = 5f;
 
     protected virtual void Awake()
@@ -37,15 +39,17 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (m_patrolPath != null)
         {
-            m_facingDirection = 1; // Baþlangýçta saða bak
+            m_facingDirection = 1; // Baþlangýç yönü sað
             transform.position = new Vector2(m_patrolPath.startPosition.x, transform.position.y);
         }
     }
 
     private void Update()
     {
+        if (m_isDead || m_health <= 0)
+            return;
+
         float distToPlayer = Mathf.Abs(m_playerTransform.position.x - transform.position.x);
-        // Oyuncu belirli bir mesafedeyse düþman player'ý "tespit etmiþ" olur
         m_playerDetected = distToPlayer < m_detectionDistance;
 
         if (m_playerDetected)
@@ -58,9 +62,36 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        if (m_isDead || m_health <= 0)
+            return;
+
+        if (m_isAttacking)
+        {
+            // Saldýrýyý iptal et
+            m_animator.ResetTrigger("Attack1");
+            m_animator.ResetTrigger("Attack2");
+            m_isAttacking = false;
+        }
+
+        m_health -= damage;
+
+        if (m_health <= 0)
+        {
+            StartCoroutine(Die());
+        }
+        else
+        {
+            m_animator.SetTrigger("TakeHit");
+        }
+    }
+
     protected abstract void EngagePlayer();
 
     protected abstract void Patrol();
+
+    protected abstract IEnumerator Die();
 
     protected void FlipSprite()
     {
@@ -69,25 +100,8 @@ public abstract class EnemyBase : MonoBehaviour
         transform.localScale = scale;
     }
 
-    public void TakeDamage(float damage)
-    {
-        if (m_health <= 0)
-            return;
-
-        m_health -= damage;
-
-        if (m_health <= 0) StartCoroutine(Die());
-        else
-        {
-            m_animator.SetTrigger("TakeHit");
-        }
-    }
-
-    protected abstract IEnumerator Die();
-
     protected virtual void MoveTowardsPlayer(float direction)
     {
-        // Oyuncuya döndür
         if (Mathf.Sign(direction) != Mathf.Sign(m_facingDirection))
         {
             m_facingDirection = (int)Mathf.Sign(direction);
@@ -99,7 +113,6 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void MoveAwayFromPlayer(float direction)
     {
-        // Oyuncudan uzaklaþýrken de yüzü ayarla
         if (Mathf.Sign(direction) != Mathf.Sign(m_facingDirection))
         {
             m_facingDirection = (int)Mathf.Sign(direction);

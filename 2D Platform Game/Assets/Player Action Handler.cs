@@ -44,7 +44,7 @@ public class PlayerActionHandler : MonoBehaviour
     public bool isStuck = false;
     private Slider m_healthSlider;
     public Image m_fillImage;
-    private float m_health;
+    public float m_health;
     public float m_maxHealth = 500f;
     public bool m_meleeRangeisActive = false;
     private float m_baseDamage = 10f;
@@ -381,6 +381,9 @@ public class PlayerActionHandler : MonoBehaviour
 
     public void GetDamage(float damage, Transform attackerTransform = null)
     {
+        if (m_rolling)
+            return;
+
         bool isFacingAttack = true;
 
         if (attackerTransform != null)
