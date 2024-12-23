@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerAnimControl : MonoBehaviour
 {
     private Animator m_animator;
-    private PlayerType playerType;
 
     private void Start()
     {
@@ -22,6 +21,7 @@ public class PlayerAnimControl : MonoBehaviour
 
     public void SetRunningState(float inputX)
     {
+        // 1 => koþma, 0 => idle
         m_animator.SetInteger("AnimState", Mathf.Abs(inputX) > Mathf.Epsilon ? 1 : 0);
     }
 
@@ -50,9 +50,9 @@ public class PlayerAnimControl : MonoBehaviour
         m_animator.SetTrigger("Blocked");
     }
 
-    public void SetTriggerEdgeGrab()
+    public void SetTriggerRespawn()
     {
-        m_animator.SetTrigger("Edge Grab");
+        m_animator.SetTrigger("Respawn");
     }
 
     public void SetIdleBlock(bool isBlocking)

@@ -1,67 +1,81 @@
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    private PlayerActionHandler actionHandler;
-    private PlayerType playerType;
-
+    private PlayerCore m_playerCore;
 
     [Header("Key Code Keyboard")]
-    [SerializeField] public KeyCode rightMoveButton, leftMoveButton, jumpButton, blockButton, attackButton, rollButton;
+    public KeyCode rightMoveButton = KeyCode.D;
+    public KeyCode leftMoveButton = KeyCode.A;
+    public KeyCode jumpButton = KeyCode.W;
+    public KeyCode blockButton = KeyCode.LeftShift;
+    public KeyCode attackButton = KeyCode.J;
+    public KeyCode rollButton = KeyCode.K;
 
     [Header("Key Code Joystick")]
-    [SerializeField] public KeyCode JoyStick_rightMoveButton, JoyStick_leftMoveButton, JoyStick_jumpButton, JoyStick_blockButton, JoyStick_attackButton, JoyStick_rollButton;
+    public KeyCode JoyStick_rightMoveButton;
+    public KeyCode JoyStick_leftMoveButton;
+    public KeyCode JoyStick_jumpButton;
+    public KeyCode JoyStick_blockButton;
+    public KeyCode JoyStick_attackButton;
+    public KeyCode JoyStick_rollButton;
 
     private void Awake()
     {
-        actionHandler = GetComponent<PlayerActionHandler>();
-        playerType = actionHandler.playerType;
+        m_playerCore = GetComponent<PlayerCore>();
     }
 
     private void Update()
     {
+        if (m_playerCore == null) return;
+
+        // Eðer bu player AI ise InputHandler’ý kullanma
+        if (m_playerCore.PlayerType == PlayerType.AI)
+            return;
+
         GetInput();
     }
 
     private void GetInput()
     {
-        // Horizontal Movement Input (Keyboard or Joystick)
+        // Horizontal
         float horizontalInput = 0f;
+        bool isRightPressed = Input.GetKey(rightMoveButton) || Input.GetKey(JoyStick_rightMoveButton);
+        bool isLeftPressed = Input.GetKey(leftMoveButton) || Input.GetKey(JoyStick_leftMoveButton);
 
-        // Horizontal Movement: Keyboard or Joystick
-        if (Input.GetKey(rightMoveButton) || Input.GetKey(JoyStick_rightMoveButton))  // Right move
+        if (isRightPressed)
             horizontalInput = 1f;
-        else if (Input.GetKey(leftMoveButton) || Input.GetKey(JoyStick_leftMoveButton))  // Left move
+        else if (isLeftPressed)
             horizontalInput = -1f;
-        else if (!Input.GetKey(rightMoveButton) && !Input.GetKey(leftMoveButton) &&
-            !Input.GetKey(JoyStick_rightMoveButton) && !Input.GetKey(JoyStick_leftMoveButton))
-        {
-            horizontalInput = 0f;
-        }
 
-        actionHandler.HandleHorizontalMovement(horizontalInput);
+        m_playerCore.MovementController.HandleHorizontalMovement(horizontalInput);
 
-        // Jump Input (Keyboard or Joystick)
+        // Jump
         if (Input.GetKeyDown(jumpButton) || Input.GetKeyDown(JoyStick_jumpButton))
         {
-            actionHandler.HandleJump();
+            m_playerCore.MovementController.HandleJump();
         }
-           
 
-        // Roll Input (Keyboard or Joystick)
+        // Roll
         if (Input.GetKeyDown(rollButton) || Input.GetKeyDown(JoyStick_rollButton))
-            actionHandler.HandleRoll();
+        {
+            m_playerCore.MovementController.HandleRoll();
+        }
 
-        // Attack Input (Keyboard or Joystick)
-        if (Input.GetKeyDown(attackButton) || Input.GetKeyDown(JoyStick_attackButton))  // Mouse click or joystick button
-            actionHandler.HandleAttack();
+        // Attack
+        if (Input.GetKeyDown(attackButton) || Input.GetKeyDown(JoyStick_attackButton))
+        {
+            m_playerCore.CombatController.HandleAttack();
+        }
 
-        // Block Input (Keyboard or Joystick)
-        if (Input.GetKeyDown(blockButton) || Input.GetKeyDown(JoyStick_blockButton))  // Mouse right click or joystick button
-            actionHandler.HandleBlock(true);
-        else if (Input.GetMouseButtonUp(1) || Input.GetKeyUp(JoyStick_blockButton))  // Mouse right click or joystick button
-            actionHandler.HandleBlock(false);
+        // Block
+        if (Input.GetKeyDown(blockButton) || Input.GetKeyDown(JoyStick_blockButton))
+        {
+            m_playerCore.CombatController.HandleBlock(true);
+        }
+        else if (Input.GetKeyUp(blockButton) || Input.GetKeyUp(JoyStick_blockButton))
+        {
+            m_playerCore.CombatController.HandleBlock(false);
+        }
     }
-
 }

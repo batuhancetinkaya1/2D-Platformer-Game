@@ -154,7 +154,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.7463177, y: 0.8142824}
+  m_Offset: {x: 0.5937526, y: 0.89621556}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -165,7 +165,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.72587216, y: 0.7494316}
+  m_Size: {x: 1.0310023, y: 0.9811047}
   m_EdgeRadius: 0
 --- !u!114 &4381882204220027370
 MonoBehaviour:
@@ -880,8 +880,12 @@ GameObject:
   - component: {fileID: 1199267831321287931}
   - component: {fileID: 540836551570598715}
   - component: {fileID: 6648844621955296515}
+  - component: {fileID: 1802144012585738871}
+  - component: {fileID: 3160347599602077891}
+  - component: {fileID: 4901808089387330577}
+  - component: {fileID: 8125684711131701666}
   - component: {fileID: 7970016792755039888}
-  - component: {fileID: 4448120422748292660}
+  - component: {fileID: 1938643494245037909}
   - component: {fileID: 2539739736616003148}
   - component: {fileID: 8939412346345633465}
   m_Layer: 9
@@ -953,7 +957,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: ae297123f091bbf4e8f1835eb98fb293, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1058,6 +1062,67 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1802144012585738871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727420410038831104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10da2f5fcb6f96547af055508b0a3704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_playerType: 0
+--- !u!114 &3160347599602077891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727420410038831104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d27340a3d606502478ea27ec57e9fe2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxHealth: 500
+  m_healthSlider: {fileID: 0}
+  m_fillImage: {fileID: 0}
+  IsBlocking: 0
+--- !u!114 &4901808089387330577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727420410038831104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3e9526d83c13e64e8a44792da74cb7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_respawnPoint: {fileID: 0}
+--- !u!114 &8125684711131701666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727420410038831104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192e3dad7f3b9f54e9d51b50e8473adf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_speed: 4
+  m_jumpForce: 7.5
+  m_rollForce: 8
+  m_wallSlideSpeed: 2
+  m_wallStickTime: 1
+  m_wallJumpTime: 0.2
+  dustPrefab: {fileID: 1038168246061390451, guid: 8b8c8cc6774fb074cb9139cc631b108e, type: 3}
 --- !u!114 &7970016792755039888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1082,7 +1147,7 @@ MonoBehaviour:
   JoyStick_blockButton: 333
   JoyStick_attackButton: 332
   JoyStick_rollButton: 331
---- !u!114 &4448120422748292660
+--- !u!114 &1938643494245037909
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1091,22 +1156,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8727420410038831104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca225ea88aee3114cbe0474f046e0b6e, type: 3}
+  m_Script: {fileID: 11500000, guid: ebc9c2883b091934e837322e3bb0a3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 4
-  m_jumpForce: 7.5
-  m_rollForce: 8
-  m_wallSlideSpeed: 2
-  m_wallStickTime: 1
-  m_wallJumpTime: 0.2
-  playerType: 0
-  m_slideDust: {fileID: 1038168246061390451, guid: 8b8c8cc6774fb074cb9139cc631b108e, type: 3}
-  isStuck: 0
-  m_fillImage: {fileID: 0}
-  m_health: 500
-  m_maxHealth: 500
-  m_meleeRangeisActive: 0
+  m_baseDamage: 10
+  m_thirdAttackDamage: 15
 --- !u!114 &2539739736616003148
 MonoBehaviour:
   m_ObjectHideFlags: 0

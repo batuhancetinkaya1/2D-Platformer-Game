@@ -101,9 +101,9 @@ GameObject:
   - component: {fileID: 9088310678294363819}
   - component: {fileID: 5804291685630674556}
   - component: {fileID: 7046194593069030546}
-  - component: {fileID: 6735007805724923614}
   - component: {fileID: 4806074324472992554}
   - component: {fileID: 841992086113299866}
+  - component: {fileID: 4659492477120292952}
   m_Layer: 3
   m_Name: Mushroom
   m_TagString: Enemy
@@ -200,28 +200,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6735007805724923614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9217596898024582931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebb33e7549976f44096057419ad14966, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_patrolPath: {fileID: 0}
-  m_fireballPrefab: {fileID: 1765253426591101103, guid: 6c407f49685a57147b28ff35b73f4763, type: 3}
-  m_health: 0
-  m_speed: 1
-  m_facingDirection: 0
-  m_meleeRangeSensor: {fileID: 0}
-  m_idleWaitTime: 1
-  m_detectionDistance: 5
-  m_distanceAngle: 90
-  m_enemyType: 1
 --- !u!61 &4806074324472992554
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -294,3 +272,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &4659492477120292952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9217596898024582931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa13cb0e53e045847b3b112d282f1ad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_patrolPath: {fileID: 0}
+  m_fireballPrefab: {fileID: 0}
+  m_health: 0
+  m_speed: 1
+  m_facingDirection: 0
+  m_meleeRangeSensor: {fileID: 0}
+  m_idleWaitTime: 1
+  m_detectionDistance: 5
+  m_distanceAngle: 90

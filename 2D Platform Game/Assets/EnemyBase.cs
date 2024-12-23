@@ -6,6 +6,7 @@ public abstract class EnemyBase : MonoBehaviour
     public PatrolPath m_patrolPath;
     public GameObject m_fireballPrefab;
 
+    [Header("Stats")]
     public float m_health;
     public float m_speed = 1f;
     public int m_facingDirection;
@@ -19,16 +20,16 @@ public abstract class EnemyBase : MonoBehaviour
     protected bool m_isDead = false;
     protected bool m_isAttacking = false;
 
-    // Devriye deðiþkenleri
+    [Header("Idle Settings")]
     protected bool m_isIdle = false;
     protected float m_idleTimer = 0f;
-    public float m_idleWaitTime = 1f;
+    public float m_idleWaitTime = 1f; // Devriye sýrasýnda bekleme süresi
 
-    // Oyuncu algýlama mesafesi
+    [Header("Detection Settings")]
     public float m_detectionDistance = 5f;
     public float m_distanceAngle = 90f;
 
-    protected Coroutine m_currentAttackCoroutine; // Aktif saldýrý coroutine'i
+    protected Coroutine m_currentAttackCoroutine;
 
     protected virtual void Awake()
     {
@@ -42,58 +43,54 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (m_patrolPath != null)
         {
-            m_facingDirection = 1; // Baþlangýç yönü sað
+            m_facingDirection = 1; // Default sað
             transform.position = new Vector2(m_patrolPath.startPosition.x, transform.position.y);
         }
     }
 
     private void Update()
     {
-        if (m_isDead || m_health <= 0) return;
+        if (m_isDead || m_health <= 0)
+            return;
 
-        // Ana raycast algýlama
+        // Oyuncu görüþ alanýnda mý?
         m_playerDetected = RaycastHelper.IsTargetInView(
             (Vector2)transform.position,
             m_playerTransform,
-            m_detectionDistance, // Görüþ mesafesi
-            m_distanceAngle,     // Görüþ açýsý
-            m_facingDirection,   // Düþmanýn baktýðý yön
+            m_detectionDistance,
+            m_distanceAngle,
+            m_facingDirection,
             LayerMask.GetMask("Player")
         );
 
-        // Yakýn çevresel raycast algýlama (m_detectionDistance / 2)
+        // Ek / yakýndan algýlama
         if (!m_playerDetected)
         {
             m_playerDetected = RaycastHelper.IsTargetInView(
                 (Vector2)transform.position,
                 m_playerTransform,
-                m_detectionDistance / 2f, // Daha kýsa mesafede kontrol
-                360f,                     // Tüm yönlerde (tam çember)
-                1,                        // Her zaman sað (düz vektör)
+                m_detectionDistance / 2f,
+                360f,
+                1, // sabit
                 LayerMask.GetMask("Player")
             );
         }
 
-        // Oyuncu algýlandýysa
         if (m_playerDetected)
-        {
             EngagePlayer();
-        }
         else
-        {
             Patrol();
-        }
     }
 
-
+    // Ortak hasar alma
     public void TakeDamage(float damage)
     {
         if (m_isDead || m_health <= 0)
             return;
 
+        // Saldýrý iptal
         if (m_isAttacking)
         {
-            // Eðer saldýrý coroutine'i çalýþýyorsa iptal et
             if (m_currentAttackCoroutine != null)
             {
                 StopCoroutine(m_currentAttackCoroutine);
@@ -117,9 +114,7 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     protected abstract void EngagePlayer();
-
     protected abstract void Patrol();
-
     protected abstract IEnumerator Die();
 
     protected void FlipSprite()
@@ -137,7 +132,7 @@ public abstract class EnemyBase : MonoBehaviour
             FlipSprite();
         }
 
-        m_rb.velocity = new Vector2(m_speed * direction, m_rb.velocity.y);
+        m_rb.velocity = new Vector2(m_speed * direction * 2f, m_rb.velocity.y);
     }
 
     protected virtual void MoveAwayFromPlayer(float direction)
@@ -145,55 +140,51 @@ public abstract class EnemyBase : MonoBehaviour
         if (m_patrolPath == null)
             return;
 
-        // Güncel pozisyon
         Vector2 currentPosition = transform.position;
-
-        // Start ve End pozisyonlarýna uzaklýklarý hesapla
         float distanceToStart = Vector2.Distance(currentPosition, m_patrolPath.startPosition);
         float distanceToEnd = Vector2.Distance(currentPosition, m_patrolPath.endPosition);
 
-        // En uzak noktaya kaç
         Vector2 targetPosition;
         if (distanceToStart > distanceToEnd)
-        {
             targetPosition = m_patrolPath.startPosition;
-        }
         else
-        {
             targetPosition = m_patrolPath.endPosition;
-        }
 
-        // Yüz yönünü oyuncuya göre sabit tut
         float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
         m_facingDirection = (int)directionToPlayer;
         FlipSprite();
 
-        // Hedef pozisyona doðru hýzlandýrýlmýþ bir þekilde hareket et
-        float retreatSpeed = m_speed * 2f; // Kaçýþ hýzý
+        float retreatSpeed = m_speed * 2f;
         Vector2 retreatDirection = (targetPosition - currentPosition).normalized;
         m_rb.velocity = new Vector2(retreatDirection.x * retreatSpeed, m_rb.velocity.y);
 
-        // Devriye sýnýrlarýnýn dýþýna çýkýlmasýný önle
-        float clampedX = Mathf.Clamp(transform.position.x, m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
+        // Devriye sýnýrýna oturt
+        float clampedX = Mathf.Clamp(transform.position.x,
+                                     m_patrolPath.startPosition.x,
+                                     m_patrolPath.endPosition.x);
         transform.position = new Vector2(clampedX, transform.position.y);
     }
 
+    protected bool ShouldRetreat(bool inMeleeRange, float healthThreshold = 15f)
+    {
+        if (m_health <= healthThreshold)
+            return true;
+        if (inMeleeRange)
+            return true;
+        return false;
+    }
 
-
-
+    // (Sahnede çizim - debug amaçlý)
     private void OnDrawGizmos()
     {
-        // Ana raycast görüþ alanýný çiz
         RaycastHelper.DrawGizmos(
             (Vector2)transform.position,
-            m_detectionDistance, // Görüþ mesafesi
-            m_distanceAngle,     // Görüþ açýsý
-            m_facingDirection    // Düþmanýn baktýðý yön
+            m_detectionDistance,
+            m_distanceAngle,
+            m_facingDirection
         );
 
-        // Yakýn çevresel algýlama çemberini çiz
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, m_detectionDistance / 2f);
     }
-
 }

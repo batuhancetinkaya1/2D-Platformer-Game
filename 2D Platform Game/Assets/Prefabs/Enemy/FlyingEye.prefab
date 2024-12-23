@@ -91,9 +91,9 @@ GameObject:
   - component: {fileID: 7216412283727290818}
   - component: {fileID: 7448007410254242012}
   - component: {fileID: 1046155411454904942}
-  - component: {fileID: 5610234174842912678}
   - component: {fileID: 5903509906687035026}
   - component: {fileID: 8479334544133758283}
+  - component: {fileID: 8147006312049859251}
   m_Layer: 3
   m_Name: FlyingEye
   m_TagString: Enemy
@@ -190,28 +190,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5610234174842912678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099738569171435262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebb33e7549976f44096057419ad14966, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_patrolPath: {fileID: 0}
-  m_fireballPrefab: {fileID: 1765253426591101103, guid: 6c407f49685a57147b28ff35b73f4763, type: 3}
-  m_health: 0
-  m_speed: 1
-  m_facingDirection: 0
-  m_meleeRangeSensor: {fileID: 0}
-  m_idleWaitTime: 1
-  m_detectionDistance: 5
-  m_distanceAngle: 90
-  m_enemyType: 0
 --- !u!50 &5903509906687035026
 Rigidbody2D:
   serializedVersion: 4
@@ -274,3 +252,24 @@ CapsuleCollider2D:
   m_Offset: {x: 0.049386483, y: -0.022226963}
   m_Size: {x: 0.23562813, y: 0.22081132}
   m_Direction: 1
+--- !u!114 &8147006312049859251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099738569171435262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 421806a749052244dbe497d89e75fec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_patrolPath: {fileID: 0}
+  m_fireballPrefab: {fileID: 1765253426591101103, guid: 6c407f49685a57147b28ff35b73f4763, type: 3}
+  m_health: 0
+  m_speed: 1
+  m_facingDirection: 0
+  m_meleeRangeSensor: {fileID: 0}
+  m_idleWaitTime: 1
+  m_detectionDistance: 5
+  m_distanceAngle: 90

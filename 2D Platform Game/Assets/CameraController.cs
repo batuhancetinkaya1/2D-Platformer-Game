@@ -1,40 +1,56 @@
 using UnityEngine;
-using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
-    private Transform m_playerTransform;
-    private Camera m_mainCamera;
+    [Header("Target")]
+    [SerializeField] private Transform m_target; // Ana hedef (Player)
+    [SerializeField] private Transform m_finalFightCenter; // FinalFight merkezi
 
-    private Vector3 m_offset;
-    private float m_smoothSpeed = 0.125f;
-    private float m_defaultZoom;
-    private bool m_isRespawning;
+    [Header("Follow Settings")]
+    [SerializeField] private float m_smoothTime = 0.2f;
+    private Vector3 m_velocity = Vector3.zero;
+    [SerializeField] private Vector3 m_offset = new Vector3(0f, 0f, -10f);
 
-    [Header("CatEncounter Settings")]
-    [SerializeField] private float m_catEncounterZoom = 5f;
-    [SerializeField] private float m_catEncounterSmoothTime = 0.5f;
+    [Header("Zoom Settings (Orthographic)")]
+    [SerializeField] private float m_defaultZoom = 5f;
+    [SerializeField] private float m_minZoom = 3f;
+    [SerializeField] private float m_maxZoom = 8f;
+    [SerializeField] private float m_zoomSpeed = 2f;
 
-    [Header("FinalFight Settings")]
-    [SerializeField] private Transform m_finalFightCenter;
-    [SerializeField] private float m_finalFightZoom = 10f;
-
-    [Header("Respawn Settings")]
+    [Header("State-Specific Settings")]
+    [SerializeField] private float m_catEncounterZoom = 3f;
+    [SerializeField] private float m_finalFightZoom = 8f;
     [SerializeField] private float m_respawnWaitTime = 1.5f;
+
+    private Camera m_cam;
+    private float m_currentZoom;
+    private bool m_isRespawning = false;
 
     private void Awake()
     {
-        m_mainCamera = Camera.main;
-        m_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        // Kamerayý bul
+        m_cam = GetComponent<Camera>();
+        if (m_cam == null)
+        {
+            m_cam = Camera.main;
+            Debug.LogWarning("CameraController: Script is not on the main camera, using Camera.main instead.");
+        }
 
-        // Varsayýlan deðerler
-        m_defaultZoom = m_mainCamera.orthographicSize;
-        m_offset = new Vector3(0, 0, -10);
+        // Eðer sahnede "Player" tag'li obje yoksa m_target null kalýr
+        if (m_target == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj)
+            {
+                m_target = playerObj.transform;
+            }
+            else
+            {
+                Debug.LogWarning("CameraController: No Player found with tag 'Player'.");
+            }
+        }
 
-        // Eðer FinalFightCenter sahnede etiketli bir objeyse:
-        // var finalFightObject = GameObject.FindGameObjectWithTag("FinalFightCenter");
-        // if (finalFightObject != null)
-        //     m_finalFightCenter = finalFightObject.transform;
+        m_currentZoom = m_defaultZoom;
     }
 
     private void OnEnable()
@@ -47,13 +63,31 @@ public class CameraController : MonoBehaviour
         GameManager.OnGameStateChange -= HandleGameStateChange;
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        // GameOn durumunda kamera, player'ý takip ediyor
-        if (GameManager.Instance.CurrentState == GameStates.GameOn && !m_isRespawning)
+        if (m_target == null || m_isRespawning)
         {
-            Vector3 targetPosition = m_playerTransform.position + m_offset;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, m_smoothSpeed);
+            return;
+        }
+
+        // Kamera pozisyonunu hedefle eþleþtir
+        Vector3 desiredPosition = m_target.position + m_offset;
+        float smoothedX = Mathf.SmoothDamp(transform.position.x, desiredPosition.x, ref m_velocity.x, m_smoothTime);
+        float smoothedY = Mathf.SmoothDamp(transform.position.y, desiredPosition.y, ref m_velocity.y, m_smoothTime);
+        float newZ = desiredPosition.z; // Offset Z
+
+        transform.position = new Vector3(smoothedX, smoothedY, newZ);
+
+        // Zoom kontrolü
+        if (m_cam.orthographic)
+        {
+            float nextZoom = Mathf.Lerp(m_cam.orthographicSize, m_currentZoom, Time.deltaTime * m_zoomSpeed);
+            m_cam.orthographicSize = nextZoom;
+        }
+        else
+        {
+            float fov = Mathf.Lerp(m_cam.fieldOfView, m_currentZoom, Time.deltaTime * m_zoomSpeed);
+            m_cam.fieldOfView = fov;
         }
     }
 
@@ -66,7 +100,7 @@ public class CameraController : MonoBehaviour
                 break;
 
             case GameStates.CatEncounter:
-                FocusOnPlayer(m_catEncounterZoom, m_catEncounterSmoothTime);
+                FocusOnPlayer(m_catEncounterZoom);
                 break;
 
             case GameStates.FinalFight:
@@ -78,70 +112,56 @@ public class CameraController : MonoBehaviour
                 break;
 
             case GameStates.GameOver:
-                HandleGameOver();
+                StopCameraMovement();
                 break;
         }
     }
 
     private void ResetCamera()
     {
-        m_mainCamera.orthographicSize = m_defaultZoom;
+        m_currentZoom = m_defaultZoom;
         m_offset = new Vector3(0, 0, -10);
     }
 
-    private void FocusOnPlayer(float zoom, float smoothTime)
+    private void FocusOnPlayer(float zoomLevel)
     {
-        StartCoroutine(SmoothZoom(zoom, smoothTime));
-        transform.position = new Vector3(
-            m_playerTransform.position.x,
-            m_playerTransform.position.y,
-            transform.position.z
-        );
+        m_currentZoom = Mathf.Clamp(zoomLevel, m_minZoom, m_maxZoom);
+        m_offset = new Vector3(0, 0, -10);
     }
 
     private void FocusOnFinalFight()
     {
         if (m_finalFightCenter != null)
         {
-            m_mainCamera.orthographicSize = m_finalFightZoom;
-            transform.position = new Vector3(
-                m_finalFightCenter.position.x,
-                m_finalFightCenter.position.y,
-                transform.position.z
-            );
+            m_currentZoom = Mathf.Clamp(m_finalFightZoom, m_minZoom, m_maxZoom);
+            transform.position = new Vector3(m_finalFightCenter.position.x, m_finalFightCenter.position.y, m_offset.z);
         }
     }
 
     private void StartRespawnSequence()
     {
         m_isRespawning = true;
-        StartCoroutine(RespawnCameraFreeze());
+        Invoke(nameof(EndRespawnSequence), m_respawnWaitTime);
     }
 
-    private IEnumerator RespawnCameraFreeze()
+    private void EndRespawnSequence()
     {
-        yield return new WaitForSeconds(m_respawnWaitTime);
         m_isRespawning = false;
         ResetCamera();
     }
 
-    private void HandleGameOver()
+    private void StopCameraMovement()
     {
-        Debug.Log("Game Over - Camera Stopped Following Player");
+        m_isRespawning = true; // Kamerayý tamamen dondur
     }
 
-    private IEnumerator SmoothZoom(float targetZoom, float duration)
+    public void SetZoom(float newZoom)
     {
-        float startZoom = m_mainCamera.orthographicSize;
-        float elapsed = 0f;
+        m_currentZoom = Mathf.Clamp(newZoom, m_minZoom, m_maxZoom);
+    }
 
-        while (elapsed < duration)
-        {
-            m_mainCamera.orthographicSize = Mathf.Lerp(startZoom, targetZoom, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        m_mainCamera.orthographicSize = targetZoom;
+    public void ResetZoom()
+    {
+        m_currentZoom = m_defaultZoom;
     }
 }
