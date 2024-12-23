@@ -412,8 +412,6 @@ public class PlayerActionHandler : MonoBehaviour
         }
     }
 
-
-
     public void Die()
     {
         playerAnimControl.HandleDeath(); // Trigger death animation

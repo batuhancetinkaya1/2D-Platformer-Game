@@ -26,6 +26,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     // Oyuncu algýlama mesafesi
     public float m_detectionDistance = 5f;
+    public float m_distanceAngle = 90f;
 
     protected Coroutine m_currentAttackCoroutine; // Aktif saldýrý coroutine'i
 
@@ -48,12 +49,32 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void Update()
     {
-        if (m_isDead || m_health <= 0)
-            return;
+        if (m_isDead || m_health <= 0) return;
 
-        float distToPlayer = Mathf.Abs(m_playerTransform.position.x - transform.position.x);
-        m_playerDetected = distToPlayer < m_detectionDistance;
+        // Ana raycast algýlama
+        m_playerDetected = RaycastHelper.IsTargetInView(
+            (Vector2)transform.position,
+            m_playerTransform,
+            m_detectionDistance, // Görüþ mesafesi
+            m_distanceAngle,     // Görüþ açýsý
+            m_facingDirection,   // Düþmanýn baktýðý yön
+            LayerMask.GetMask("Player")
+        );
 
+        // Yakýn çevresel raycast algýlama (m_detectionDistance / 2)
+        if (!m_playerDetected)
+        {
+            m_playerDetected = RaycastHelper.IsTargetInView(
+                (Vector2)transform.position,
+                m_playerTransform,
+                m_detectionDistance / 2f, // Daha kýsa mesafede kontrol
+                360f,                     // Tüm yönlerde (tam çember)
+                1,                        // Her zaman sað (düz vektör)
+                LayerMask.GetMask("Player")
+            );
+        }
+
+        // Oyuncu algýlandýysa
         if (m_playerDetected)
         {
             EngagePlayer();
@@ -63,6 +84,7 @@ public abstract class EnemyBase : MonoBehaviour
             Patrol();
         }
     }
+
 
     public void TakeDamage(float damage)
     {
@@ -120,12 +142,58 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void MoveAwayFromPlayer(float direction)
     {
-        if (Mathf.Sign(direction) != Mathf.Sign(m_facingDirection))
+        if (m_patrolPath == null)
+            return;
+
+        // Güncel pozisyon
+        Vector2 currentPosition = transform.position;
+
+        // Start ve End pozisyonlarýna uzaklýklarý hesapla
+        float distanceToStart = Vector2.Distance(currentPosition, m_patrolPath.startPosition);
+        float distanceToEnd = Vector2.Distance(currentPosition, m_patrolPath.endPosition);
+
+        // En uzak noktaya kaç
+        Vector2 targetPosition;
+        if (distanceToStart > distanceToEnd)
         {
-            m_facingDirection = (int)Mathf.Sign(direction);
-            FlipSprite();
+            targetPosition = m_patrolPath.startPosition;
+        }
+        else
+        {
+            targetPosition = m_patrolPath.endPosition;
         }
 
-        m_rb.velocity = new Vector2(m_speed * direction, m_rb.velocity.y);
+        // Yüz yönünü oyuncuya göre sabit tut
+        float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
+        m_facingDirection = (int)directionToPlayer;
+        FlipSprite();
+
+        // Hedef pozisyona doðru hýzlandýrýlmýþ bir þekilde hareket et
+        float retreatSpeed = m_speed * 2f; // Kaçýþ hýzý
+        Vector2 retreatDirection = (targetPosition - currentPosition).normalized;
+        m_rb.velocity = new Vector2(retreatDirection.x * retreatSpeed, m_rb.velocity.y);
+
+        // Devriye sýnýrlarýnýn dýþýna çýkýlmasýný önle
+        float clampedX = Mathf.Clamp(transform.position.x, m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
+        transform.position = new Vector2(clampedX, transform.position.y);
     }
+
+
+
+
+    private void OnDrawGizmos()
+    {
+        // Ana raycast görüþ alanýný çiz
+        RaycastHelper.DrawGizmos(
+            (Vector2)transform.position,
+            m_detectionDistance, // Görüþ mesafesi
+            m_distanceAngle,     // Görüþ açýsý
+            m_facingDirection    // Düþmanýn baktýðý yön
+        );
+
+        // Yakýn çevresel algýlama çemberini çiz
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, m_detectionDistance / 2f);
+    }
+
 }

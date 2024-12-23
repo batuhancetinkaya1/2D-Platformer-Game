@@ -5,11 +5,9 @@ public class UnifiedEnemy : EnemyBase
 {
     public EnemyType m_enemyType;
 
-    public float m_meleeRange = 1.5f;
-
-    private float m_lastAttackTime;
     private bool m_useAttack1 = true; // Attack1 ve Attack2 arasýnda geçiþ yapmak için kontrol deðiþkeni
-
+    private float m_lastAttackTime;
+     
     protected override void Start()
     {
         base.Start();
@@ -69,17 +67,42 @@ public class UnifiedEnemy : EnemyBase
 
     protected override void EngagePlayer()
     {
+        // Yüz yönünü her zaman oyuncuya göre ayarla
         float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
-
-        if (Mathf.Sign(directionToPlayer) != Mathf.Sign(m_facingDirection))
-        {
-            m_facingDirection = (int)directionToPlayer;
-            FlipSprite();
-        }
+        m_facingDirection = (int)directionToPlayer;
+        FlipSprite();
 
         bool inMeleeRange = m_meleeRangeSensor.State();
+        bool shouldRetreat = ShouldRetreat(inMeleeRange);
 
-        if (m_enemyType == EnemyType.Mushroom)
+        if (m_enemyType == EnemyType.FlyingEye)
+        {
+            // Rastgelelik faktörleri
+            float randomDecision = Random.Range(0f, 1f); // 0 ile 1 arasýnda bir sayý
+
+            if (shouldRetreat && randomDecision < 0.6f) // %35 ihtimalle kaç
+            {
+                MoveAwayFromPlayer(-directionToPlayer);
+            }
+            else if (inMeleeRange && randomDecision < 0.5f) // %50 ihtimalle melee saldýrýsý
+            {
+                FlyingEyeMeleeAttack();
+            }
+            else
+            {
+                // Menzilli saldýrý veya kararsýzlýk animasyonu
+                if (randomDecision < 0.8f) // %80 ihtimalle menzilli saldýrý
+                {
+                    StartCoroutine(RangedAttack());
+                }
+                else
+                {
+                    // Boþ durma veya baþka bir animasyon
+                    m_rb.velocity = Vector2.zero;
+                }
+            }
+        }
+        else if (m_enemyType == EnemyType.Mushroom)
         {
             if (inMeleeRange)
             {
@@ -93,17 +116,21 @@ public class UnifiedEnemy : EnemyBase
                 MoveTowardsPlayer(directionToPlayer);
             }
         }
-        else if (m_enemyType == EnemyType.FlyingEye)
-        {
-            if (inMeleeRange)
-            {
-                FlyingEyeMeleeAttack();
-            }
-            else
-            {
-                StartCoroutine(RangedAttack());
-            }
-        }
+    }
+
+
+
+    private bool ShouldRetreat(bool inMeleeRange)
+    {
+        // Saðlýk düþükse kaç
+        if (m_health <= 15f)
+            return true;
+
+        // Yakýn dövüþ mesafesindeyse kaç
+        if (inMeleeRange)
+            return true;
+
+        return false;
     }
 
     private void MeleeAttack()

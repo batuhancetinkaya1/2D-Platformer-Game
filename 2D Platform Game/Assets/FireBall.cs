@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Fireball : MonoBehaviour
@@ -32,21 +33,26 @@ public class Fireball : MonoBehaviour
             {
                 player.GetDamage(m_damage, this.transform);
             }
-            TriggerDestruction();
+            StartCoroutine(TriggerDestruction());
         }
         else if (collision.CompareTag("Grid"))
         {
-            TriggerDestruction();
+            StartCoroutine(TriggerDestruction());
         }
     }
 
-    private void TriggerDestruction()
+    private IEnumerator TriggerDestruction()
     {
-        if (m_isDestroyed) return;
+        //if (m_isDestroyed)  yield return new WaitForSeconds(0f);
 
         m_isDestroyed = true;
         m_speed = 0;
         m_animator.SetTrigger("Collided");
-        Destroy(gameObject, m_animator.GetCurrentAnimatorStateInfo(0).length);
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+
+        // Animasyonun tamamlanmasýný bekle
+        yield return new WaitForSeconds(stateInfo.length);
+
+        Destroy(gameObject);
     }
 }
