@@ -50,10 +50,6 @@ public class Fireball : MonoBehaviour
             }
             StartCoroutine(DestroyFireball());
         }
-        // Enemy’yi de etkilemesini isterseniz, ekleyebilirsiniz.
-        // else if (collision.CompareTag("Enemy")) { ... }
-
-        // Ýsterseniz arada environment, obstacle gibi tag'leri de kontrol edebilirsiniz.
     }
 
     private IEnumerator DestroyFireball()

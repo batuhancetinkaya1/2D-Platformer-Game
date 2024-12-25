@@ -1,5 +1,6 @@
 public enum GameStates
 {
+    Menu,
     GameOn,
     CatEncounter,
     FinalFight,

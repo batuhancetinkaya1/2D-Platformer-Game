@@ -67,7 +67,7 @@ public class MushroomEnemy : EnemyBase
         bool inMeleeRange = m_meleeRangeSensor.State();
         if (inMeleeRange)
         {
-            m_rb.velocity = Vector2.zero;
+            m_rb.velocity = new Vector2(0, m_rb.velocity.y); // Yatay hýzý sýfýrla, dikey hýzý koru
             m_animator.SetBool("Run", false);
             MeleeAttack();
         }

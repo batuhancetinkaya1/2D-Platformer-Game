@@ -1,178 +1,152 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using TMPro;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    [Header("Panels")]
-    public GameObject mainMenuPanel;
-    public GameObject gamePanel;
-    public GameObject pauseMenuPanel;
-    public GameObject gameOverPanel;
-    public GameObject creditsPanel;
-    public GameObject controlsPanel;
+    [Header("Menu Panels")]
+    public GameObject m_mainMenuPanel;
+    public GameObject m_creditsPanel;
+    public GameObject m_controlsPanel;
+    [Header("Game Panels")]
+    public GameObject m_pauseMenuPanel;
+    public GameObject m_gameOverPanel;
+    public GameObject m_gamePanel;
 
     [Header("Game UI Elements")]
-    public Text starText;
-    public Image keyImage; // Örn. bir key sprite
-    // vs. ek UI
+    public TMP_Text m_starText;
+    public RawImage m_keyImage;
 
-    private int m_totalstars;
+    private int m_totalStars;
 
     private void Awake()
     {
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
-
-        // Sahne deðiþse bile yok olmasýn istiyorsanýz:
-        // DontDestroyOnLoad(this.gameObject);
-    }
-
-    private void Start()
-    {
-        ShowMainMenu();
+            return;
+        }
+        ResetStars();
     }
 
     #region Panel Control
-    public void ShowMainMenu()
+    public void LoadGameScene()
     {
-        mainMenuPanel.SetActive(true);
-        gamePanel.SetActive(false);
-        pauseMenuPanel.SetActive(false);
-        gameOverPanel.SetActive(false);
-        creditsPanel.SetActive(false);
-        controlsPanel.SetActive(false);
+        HideAllPanels();
+        GameManager.Instance.ChangeState(GameStates.GameOn);
+        GameManager.Instance.LoadScene(SceneNames.GameScene);
+        GameManager.Instance.ControlTime(false);
     }
 
-    public void StartGame()
+    public void LoadMenuScene()
     {
-        mainMenuPanel.SetActive(false);
-        gamePanel.SetActive(true);
-        pauseMenuPanel.SetActive(false);
-        gameOverPanel.SetActive(false);
-        creditsPanel.SetActive(false);
-        controlsPanel.SetActive(false);
-
-        // Gerekirse scene yüklemek isterseniz:
-        // SceneManager.LoadScene("MainScene");
+        HideAllPanels();
+        GameManager.Instance.ChangeState(GameStates.Menu);
+        GameManager.Instance.LoadScene(SceneNames.MenuScene);
+        GameManager.Instance.ControlTime(true);
     }
 
     public void ShowPauseMenu()
     {
-        pauseMenuPanel.SetActive(true);
-        Time.timeScale = 0f; // Oyunu durdur
+        m_gamePanel.SetActive(false);
+        m_pauseMenuPanel.SetActive(true);
+        GameManager.Instance.ControlTime(true);
     }
 
     public void HidePauseMenu()
     {
-        pauseMenuPanel.SetActive(false);
-        Time.timeScale = 1f;
-    }
-
-    public void ShowGameOver()
-    {
-        gameOverPanel.SetActive(true);
+        m_gamePanel.SetActive(true);
+        m_pauseMenuPanel.SetActive(false);
+        GameManager.Instance.ControlTime(false);
     }
 
     public void ShowCredits()
     {
-        creditsPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
+        HideAllPanels();
+        m_creditsPanel.SetActive(true);
     }
 
     public void HideCredits()
     {
-        creditsPanel.SetActive(false);
-        mainMenuPanel.SetActive(true);
+        m_creditsPanel.SetActive(false);
+        ShowMainMenu();
     }
 
     public void ShowControls()
     {
-        controlsPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
+        HideAllPanels();
+        m_controlsPanel.SetActive(true);
     }
 
     public void HideControls()
     {
-        controlsPanel.SetActive(false);
-        mainMenuPanel.SetActive(true);
+        m_controlsPanel.SetActive(false);
+        ShowMainMenu();
+    }
+
+    private void HideAllPanels()
+    {
+        if (m_mainMenuPanel != null) m_mainMenuPanel.SetActive(false);
+        if (m_creditsPanel != null) m_creditsPanel.SetActive(false);
+        if (m_controlsPanel != null) m_controlsPanel.SetActive(false);
+        if (m_pauseMenuPanel != null) m_pauseMenuPanel.SetActive(false);
+        if (m_gameOverPanel != null) m_gameOverPanel.SetActive(false);
+        if (m_gamePanel != null) m_gamePanel.SetActive(false);
+    }
+
+    private void ShowMainMenu()
+    {
+        if (m_mainMenuPanel != null)
+            m_mainMenuPanel.SetActive(true);
     }
     #endregion
 
-    #region star & Key
+    #region Star & Key
     public void AddStars(int amount)
     {
-        m_totalstars += amount;
-        if (starText != null)
-            starText.text = "Stars: " + m_totalstars.ToString();
+        m_totalStars += amount;
+        UpdateStarText();
     }
 
     public void ResetStars()
     {
-        m_totalstars = 0;
-        if (starText != null)
-            starText.text = "Stars: 0";
+        m_totalStars = 0;
+        UpdateStarText();
     }
 
-    // Key toplama vs.
+    private void UpdateStarText()
+    {
+        if (m_starText != null)
+            m_starText.text = $": {m_totalStars}";
+    }
+
     public void ShowKey()
     {
-        if (keyImage) keyImage.enabled = true;
+        if (m_keyImage != null) m_keyImage.enabled = true;
     }
+
     public void HideKey()
     {
-        if (keyImage) keyImage.enabled = false;
+        if (m_keyImage != null) m_keyImage.enabled = false;
     }
     #endregion
 
-    #region Buttons
-    public void OnPlayButton()
-    {
-        // StartGame butonu
-        StartGame();
-    }
+    #region Buttons MenuScene
+    public void OnPlayButton() => LoadGameScene();
+    public void OnCreditsButton() => ShowCredits();
+    public void OnControlsButton() => ShowControls();
+    public void OnHideCreditsButton() => HideCredits();
+    public void OnHideControlsButton() => HideControls();
+    #endregion
 
-    public void OnCreditsButton()
-    {
-        ShowCredits();
-    }
-
-    public void OnReturnMenuButton()
-    {
-        ShowMainMenu();
-    }
-
-    public void OnPauseButton()
-    {
-        ShowPauseMenu();
-    }
-
-    public void OnContinueButton()
-    {
-        HidePauseMenu();
-    }
-
-    public void OnGameOverReturnMenu()
-    {
-        // GameOver panelindeki ReturnMenu
-        ShowMainMenu();
-        // Time.timeScale = 1f;
-        // Gerekirse sahneyi sýfýrla:
-        // SceneManager.LoadScene("MainMenu");
-    }
-
-    public void OnShowControlsButton()
-    {
-        ShowControls();
-    }
-
-    public void OnHideControlsButton()
-    {
-        HideControls();
-    }
+    #region Buttons GameScene
+    public void OnReturnMenuButton() => LoadMenuScene();
+    public void OnPauseButton() => ShowPauseMenu();
+    public void OnContinueButton() => HidePauseMenu();
+    public void OnGameOverReturnMenu() => LoadMenuScene();
     #endregion
 }

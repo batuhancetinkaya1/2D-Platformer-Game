@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using DG.Tweening;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,15 +13,26 @@ public class GameManager : MonoBehaviour
     public delegate void GameStateChangeHandler(GameStates newState);
     public static event GameStateChangeHandler OnGameStateChange;
 
+    [Header("Transition Settings")]
+    [SerializeField] private CanvasGroup m_fadeCanvasGroup; // Siyah bir Canvas Group
+    [SerializeField] private float m_fadeDuration = 1f; // Geçiþ süresi
+
     private void Awake()
     {
         if (Instance == null)
             Instance = this;
         else
-            Destroy(gameObject); // Ýkinci bir GameManager varsa yok et (Singleton).
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        // Sahne geçiþlerinde yok olmasýn istiyorsanýz:
-        // DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
+
+        if (m_fadeCanvasGroup != null)
+            m_fadeCanvasGroup.alpha = 0; // Ýlk baþta görünmez.
+
+        ControlTime(false); //buna dikkat edelim
     }
 
     public void ChangeState(GameStates newState)
@@ -29,5 +43,35 @@ public class GameManager : MonoBehaviour
         m_currentState = newState;
         Debug.Log($"Game State Changed: {newState}");
         OnGameStateChange?.Invoke(newState);
+    }
+
+    public void LoadScene(string sceneName)
+    {
+        StartCoroutine(FadeTransition(sceneName));
+    }
+
+    private IEnumerator FadeTransition(string sceneName)
+    {
+        if (m_fadeCanvasGroup != null)
+        {
+            // Ekraný karart
+            m_fadeCanvasGroup.DOFade(1, m_fadeDuration);
+            yield return new WaitForSeconds(m_fadeDuration);
+        }
+
+        // Sahneyi yükle
+        SceneManager.LoadScene(sceneName);
+
+        if (m_fadeCanvasGroup != null)
+        {
+            // Ekraný aç
+            m_fadeCanvasGroup.DOFade(0, m_fadeDuration);
+            yield return new WaitForSeconds(m_fadeDuration);
+        }
+    }
+
+    public void ControlTime(bool isStop)
+    {
+        Time.timeScale = isStop ? 0f : 1f;
     }
 }

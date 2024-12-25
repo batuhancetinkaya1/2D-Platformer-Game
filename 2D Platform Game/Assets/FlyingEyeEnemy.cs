@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FlyingEyeEnemy : EnemyBase
 {
-    private bool m_useAttack1 = true;
+    //private bool m_useAttack1 = true;
 
     private float m_lastAttackTime;
     private float m_meleeRange = 1.5f; // Yakýn saldýrý mesafesi
@@ -13,51 +13,39 @@ public class FlyingEyeEnemy : EnemyBase
     private float m_deathSizeX = 0.1f;
     private float m_deathSizeY = 0.1f;
 
+    // ---- Eklenen mesafe eþikleri ----
+    // "Çok yakýn" mesafe (kaç ya da melee saldýr)
+    // Örnek olarak meleeRange * 2 kullanýyoruz.
+    private float m_closeDistanceThreshold;
+
+    // "Yeterince uzak" mesafe (range attack)
+    // Örnek olarak detectionDistance'ýn bir oraný.
+    private float m_farDistanceThreshold;
+
     protected override void Start()
     {
         base.Start();
         // FlyingEye özel statlar
         m_speed = 2f;      // Normal hýzý
         m_health = 45f;    // Caný
+
+        // Eþik deðerlerini isteðinize göre uyarlayabilirsiniz
+        m_closeDistanceThreshold = m_meleeRange * 2f;
+        m_farDistanceThreshold = m_detectionDistance * 0.8f;
     }
 
-    protected override void Patrol()
+    /// <summary>
+    /// ENGAGE PLAYER - "Çok çok çok çok daha geliþmiþ" versiyon
+    /// Player yakýna gelince: büyük ihtimal (örn. %70) kaç, az ihtimalle Attack2
+    /// Player uzaktaysa Attack1
+    /// Orta menzil aralýðýnda ise sabit dur
+    /// Ne olursa olsun patrol sýnýrlarý dýþýna çýkmasýn
+    /// </summary>
+    protected override void EngagePlayer()
     {
-        if (m_isIdle)
-        {
-            m_idleTimer -= Time.deltaTime;
-            if (m_idleTimer <= 0f)
-            {
-                m_isIdle = false;
-                // Yeni devriye turunda ters yönde git
-                m_facingDirection *= -1;
-                FlipSprite();
-            }
-            return;
-        }
-
         if (m_patrolPath == null)
             return;
 
-        Vector2 currentPosition = transform.position;
-        Vector2 targetPosition = (m_facingDirection > 0)
-            ? m_patrolPath.endPosition
-            : m_patrolPath.startPosition;
-
-        float step = m_speed * Time.deltaTime;
-        float newX = Mathf.MoveTowards(currentPosition.x, targetPosition.x, step);
-        transform.position = new Vector2(newX, currentPosition.y);
-
-        if (Mathf.Abs(newX - targetPosition.x) < 0.1f)
-        {
-            m_isIdle = true;
-            m_idleTimer = m_idleWaitTime;
-            m_rb.velocity = Vector2.zero;
-        }
-    }
-
-    protected override void EngagePlayer()
-    {
         float distToPlayer = Vector2.Distance(m_playerTransform.position, transform.position);
         float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
 
@@ -65,39 +53,47 @@ public class FlyingEyeEnemy : EnemyBase
         m_facingDirection = (int)directionToPlayer;
         FlipSprite();
 
-        bool inMeleeRange = distToPlayer < m_meleeRange;
-        bool shouldRetreat = ShouldRetreat(inMeleeRange, 15f);
-
-        // Rastgele karar
-        float randomDecision = Random.Range(0f, 1f);
-
-        if (shouldRetreat && randomDecision < 0.6f)
+        // Eðer zaten saldýrý animasyonundaysak, bir þey yapmayabiliriz:
+        if (m_isAttacking)
         {
-            // 2x hýzlý bir þekilde “en uzak patrol uç noktasýna” kaç
-            MoveAwayFromPlayer(-directionToPlayer);
+            return;
         }
-        else if (inMeleeRange)
+
+        // Yakýn mesafede => genelde kaçma, bazen melee
+        if (distToPlayer < m_closeDistanceThreshold)
         {
-            // Yakýn mesafede Attack2
-            FlyingEyeMeleeAttack();
-        }
-        else
-        {
-            // Menzilli saldýrý
-            // Attack1
-            if (randomDecision < 0.5f)
+            // %70 kaç, %30 Melee Attack
+            float randomValue = Random.Range(0f, 1f);
+            if (randomValue < 0.7f)
             {
-                // Sabit kalýp range attack
-                StartCoroutine(RangedAttack());
+                // Kaç => MoveAwayFromPlayer(…)
+                // (Bu metodun içinde “en uzak uç noktayý” seçiyoruz)
+                MoveAwayFromPlayer(-directionToPlayer);
             }
             else
             {
-                // Biraz yanadursun, velocity 0
-                m_rb.velocity = Vector2.zero;
+                // Saldýr => Attack2 (melee)
+                FlyingEyeMeleeAttack();
             }
         }
+        // Uzak mesafede => Range Attack (Attack1)
+        else if (distToPlayer > m_farDistanceThreshold)
+        {
+            StartCoroutine(RangedAttack());
+        }
+        // Arada kalan mesafede => Sabit durabilir
+        else
+        {
+            m_rb.velocity = Vector2.zero;
+        }
+
+        // Son olarak konumumuzu PatrolPath sýnýrlarý içinde tutalým
+        ClampToPatrolLimits();
     }
 
+    /// <summary>
+    /// Oyuncu yakýnda ise Melee Attack
+    /// </summary>
     private void FlyingEyeMeleeAttack()
     {
         if (m_isAttacking || Time.time - m_lastAttackTime < 1f)
@@ -135,8 +131,12 @@ public class FlyingEyeEnemy : EnemyBase
         m_isAttacking = false;
     }
 
+    /// <summary>
+    /// Range Attack (Attack1) – Fireball vs.
+    /// </summary>
     private IEnumerator RangedAttack()
     {
+        // Ýki saldýrý arasýnda en az 2 saniye olsun (örn.)
         if (m_isAttacking || Time.time - m_lastAttackTime < 2f)
             yield break;
 
@@ -163,6 +163,89 @@ public class FlyingEyeEnemy : EnemyBase
         m_isAttacking = false;
     }
 
+    /// <summary>
+    /// Kaçarken en uzak patrol noktasýný seçip 2x hýzda gider,
+    /// yine de yüzü player'a dönük kalýr,
+    /// en son konumu clamp'ler.
+    /// </summary>
+    protected override void MoveAwayFromPlayer(float direction)
+    {
+        if (m_patrolPath == null)
+            return;
+
+        Vector2 currentPos = transform.position;
+        float distToStart = Vector2.Distance(currentPos, m_patrolPath.startPosition);
+        float distToEnd = Vector2.Distance(currentPos, m_patrolPath.endPosition);
+
+        // En uzak noktayý bul
+        Vector2 targetPos = (distToStart > distToEnd)
+            ? m_patrolPath.startPosition
+            : m_patrolPath.endPosition;
+
+        float retreatSpeed = m_speed * 2f; // Kaçarken 2x
+        Vector2 retreatDir = (targetPos - currentPos).normalized;
+        m_rb.velocity = new Vector2(retreatDir.x * retreatSpeed, m_rb.velocity.y);
+
+        // Yüzü daima player’a dönük
+        float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
+        m_facingDirection = (int)directionToPlayer;
+        FlipSprite();
+
+        // Sýnýrlarý aþmasýn
+        ClampToPatrolLimits();
+    }
+
+    /// <summary>
+    /// Devriye Path'i sýnýrlarýna çýkmamasý için X konumunu clamp eder.
+    /// </summary>
+    private void ClampToPatrolLimits()
+    {
+        if (m_patrolPath == null) return;
+
+        float minX = Mathf.Min(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
+        float maxX = Mathf.Max(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, minX, maxX);
+        transform.position = pos;
+    }
+
+    protected override void Patrol()
+    {
+        // Orijinal devriye kodlarýnýz:
+        if (m_isIdle)
+        {
+            m_idleTimer -= Time.deltaTime;
+            if (m_idleTimer <= 0f)
+            {
+                m_isIdle = false;
+                // Yeni devriye turunda ters yönde git
+                m_facingDirection *= -1;
+                FlipSprite();
+            }
+            return;
+        }
+
+        if (m_patrolPath == null)
+            return;
+
+        Vector2 currentPosition = transform.position;
+        Vector2 targetPosition = (m_facingDirection > 0)
+            ? m_patrolPath.endPosition
+            : m_patrolPath.startPosition;
+
+        float step = m_speed * Time.deltaTime;
+        float newX = Mathf.MoveTowards(currentPosition.x, targetPosition.x, step);
+        transform.position = new Vector2(newX, currentPosition.y);
+
+        if (Mathf.Abs(newX - targetPosition.x) < 0.1f)
+        {
+            m_isIdle = true;
+            m_idleTimer = m_idleWaitTime;
+            m_rb.velocity = Vector2.zero;
+        }
+    }
+
     protected override IEnumerator Die()
     {
         m_isDead = true;
@@ -185,36 +268,5 @@ public class FlyingEyeEnemy : EnemyBase
 
         yield return new WaitForSeconds(stateInfo.length);
         this.enabled = false;
-    }
-
-    // Override MoveAwayFromPlayer: 2x speed, en uzak uç nokta
-    protected override void MoveAwayFromPlayer(float direction)
-    {
-        if (m_patrolPath == null)
-            return;
-
-        Vector2 currentPos = transform.position;
-        float distToStart = Vector2.Distance(currentPos, m_patrolPath.startPosition);
-        float distToEnd = Vector2.Distance(currentPos, m_patrolPath.endPosition);
-
-        // En uzak noktayý bul
-        Vector2 targetPos = (distToStart > distToEnd)
-            ? m_patrolPath.startPosition
-            : m_patrolPath.endPosition;
-
-        float retreatSpeed = m_speed * 2f; // Kaçarken 2x
-        Vector2 retreatDir = (targetPos - currentPos).normalized;
-        m_rb.velocity = new Vector2(retreatDir.x * retreatSpeed, m_rb.velocity.y);
-
-        // Yüzü daima player’a dönük => Yani “m_facingDirection” tekrar player’a baksýn
-        float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
-        m_facingDirection = (int)directionToPlayer;
-        FlipSprite();
-
-        // Sýnýr
-        float clampedX = Mathf.Clamp(transform.position.x,
-                                     Mathf.Min(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x),
-                                     Mathf.Max(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x));
-        transform.position = new Vector2(clampedX, transform.position.y);
     }
 }

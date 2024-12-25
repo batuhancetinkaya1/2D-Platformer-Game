@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening; // DoTween kütüphanesi gerekli
+using DG.Tweening; // DoTween animasyonlarý için
+using TMPro; // TextMeshPro desteði
 
 public class PlayerHealthManager : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class PlayerHealthManager : MonoBehaviour
     private float m_currentHealth;
 
     [Header("UI")]
-    [SerializeField] private Slider m_healthSlider;
-    [SerializeField] private Image m_fillImage;
+    [SerializeField] private Slider m_healthSlider; // Saðlýk barý slider
+    //[SerializeField] private TMP_Text m_healthText; // Saðlýk deðeri gösterecek TextMeshPro
 
     [SerializeField] private float m_healthChangeDuration = 0.5f; // Slider'ýn animasyon süresi
 
@@ -37,8 +38,6 @@ public class PlayerHealthManager : MonoBehaviour
             if (sliderTrans != null)
                 m_healthSlider = sliderTrans.GetComponent<Slider>();
         }
-        if (!m_fillImage && m_healthSlider != null)
-            m_fillImage = m_healthSlider.fillRect.GetComponent<Image>();
 
         if (m_healthSlider != null)
         {
@@ -92,7 +91,6 @@ public class PlayerHealthManager : MonoBehaviour
     {
         if (m_healthSlider != null)
         {
-            // DoTween ile slider'ý yumuþak bir þekilde güncelle
             m_healthSlider.DOValue(m_currentHealth, m_healthChangeDuration).SetEase(Ease.OutQuad);
         }
     }

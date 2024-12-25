@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
 
     [Header("Audio Clips")]
-    public List<AudioClipData> audioClips; // Inspector'da doldurun
+    public List<AudioClipData> audioClips;
 
     private Dictionary<string, AudioClipData> m_clipDict;
 
@@ -50,7 +50,7 @@ public class AudioManager : MonoBehaviour
 
         AudioClipData data = m_clipDict[clipName];
         if (musicSource.isPlaying && musicSource.clip == data.clip && !restart)
-            return; // Ayný müzik zaten çalýyorsa
+            return;
 
         musicSource.clip = data.clip;
         musicSource.volume = data.volume;
