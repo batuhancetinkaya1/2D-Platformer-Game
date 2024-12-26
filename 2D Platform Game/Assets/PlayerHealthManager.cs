@@ -11,7 +11,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Slider m_healthSlider; // Saðlýk barý slider
-    //[SerializeField] private TMP_Text m_healthText; // Saðlýk deðeri gösterecek TextMeshPro
+    [SerializeField] private TMP_Text m_healthText; // Saðlýk deðeri gösterecek TextMeshPro
 
     [SerializeField] private float m_healthChangeDuration = 0.5f; // Slider'ýn animasyon süresi
 
@@ -43,6 +43,7 @@ public class PlayerHealthManager : MonoBehaviour
         {
             m_healthSlider.maxValue = m_maxHealth;
             m_healthSlider.value = m_currentHealth;
+            m_healthText.text = "100";
         }
     }
 
@@ -92,6 +93,10 @@ public class PlayerHealthManager : MonoBehaviour
         if (m_healthSlider != null)
         {
             m_healthSlider.DOValue(m_currentHealth, m_healthChangeDuration).SetEase(Ease.OutQuad);
+        }
+        if(m_healthText != null)
+        {
+            m_healthText.text = $"{m_currentHealth * 100 / MaxHealth}";
         }
     }
 

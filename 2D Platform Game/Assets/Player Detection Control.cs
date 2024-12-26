@@ -27,6 +27,20 @@ public class PlayerDetectionControl : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("EndDoor"))
+        {
+            //loadscene fightscene if player get the key FightScene = "FightScene";
+        }
+
+        if (collision.CompareTag("DiePoint"))
+        {
+            m_playerCore.HealthManager.ReceiveDamage(m_playerCore.HealthManager.CurrentHealth);
+            //oyuncuyu öldür
+        }
+    }
+
     // Melee sensor boyutunu güncelleyebiliriz
     public void UpdateMeleeSensorScale(int facingDir)
     {

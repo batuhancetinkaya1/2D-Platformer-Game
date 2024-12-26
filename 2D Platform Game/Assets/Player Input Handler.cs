@@ -25,6 +25,12 @@ public class PlayerInputHandler : MonoBehaviour
         m_playerCore = GetComponent<PlayerCore>();
     }
 
+    private void Start()
+    {
+        if(m_playerCore != null) 
+            m_playerCore = GetComponent<PlayerCore>();
+    }
+
     private void Update()
     {
         if (m_playerCore == null) return;
@@ -33,7 +39,10 @@ public class PlayerInputHandler : MonoBehaviour
         if (m_playerCore.PlayerType == PlayerType.AI)
             return;
 
-        GetInput();
+        if (GameManager.Instance.CurrentState == GameStates.GameOn || GameManager.Instance.CurrentState == GameStates.FinalFight)
+        {
+            GetInput();
+        }
     }
 
     private void GetInput()

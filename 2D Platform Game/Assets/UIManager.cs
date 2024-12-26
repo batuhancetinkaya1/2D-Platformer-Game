@@ -12,8 +12,9 @@ public class UIManager : MonoBehaviour
     public GameObject m_controlsPanel;
     [Header("Game Panels")]
     public GameObject m_pauseMenuPanel;
-    public GameObject m_gameOverPanel;
     public GameObject m_gamePanel;
+    [Header("GameOver Panel")]
+    public GameObject m_gameOverPanel;
 
     [Header("Game UI Elements")]
     public TMP_Text m_starText;
@@ -121,7 +122,7 @@ public class UIManager : MonoBehaviour
     private void UpdateStarText()
     {
         if (m_starText != null)
-            m_starText.text = $": {m_totalStars}";
+            m_starText.text = $"x {m_totalStars}";
     }
 
     public void ShowKey()

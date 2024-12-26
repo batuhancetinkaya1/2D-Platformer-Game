@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Coin
   - Collectable
+  - EndDoor
+  - DiePoint
   layers:
   - Default
   - TransparentFX

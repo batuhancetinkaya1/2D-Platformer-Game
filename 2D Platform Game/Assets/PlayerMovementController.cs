@@ -88,9 +88,9 @@ public class PlayerMovementController : MonoBehaviour
     public void HandleHorizontalMovement(float inputX)
     {
         bool isStuck = m_isStuck;
-        // Duvar sensörleri
-        if ((m_wallSensorL1.State() && !m_wallSensorL2.State()) ||
-            (m_wallSensorR1.State() && !m_wallSensorR2.State()))
+        //Duvar sensörleri
+        if ((m_wallSensorL1.State() && !m_wallSensorL2.State()) && !m_grounded||
+            (m_wallSensorR1.State() && !m_wallSensorR2.State()) && !m_grounded)
         {
             return;
         }
