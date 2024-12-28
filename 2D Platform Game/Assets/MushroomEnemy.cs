@@ -6,7 +6,7 @@ public class MushroomEnemy : EnemyBase
     private bool m_useAttack1 = true;
 
     private float m_lastAttackTime;
-    private float m_damage = 100f;
+    private float m_damage = 10f;
     private float m_deathOffsetX = 0.0015f;
     private float m_deathOffsetY = -0.2579f;
     private float m_deathSizeX = 0.03f;
@@ -39,7 +39,7 @@ public class MushroomEnemy : EnemyBase
             return;
 
         Vector2 currentPosition = transform.position;
-        Vector2 targetPosition = m_facingDirection > 0 ? m_patrolPath.endPosition : m_patrolPath.startPosition;
+        Vector2 targetPosition = m_facingDirection > 0 ? m_patrolPath.m_endPosition : m_patrolPath.m_startPosition;
 
         float step = m_speed * Time.deltaTime;
         float newX = Mathf.MoveTowards(currentPosition.x, targetPosition.x, step);

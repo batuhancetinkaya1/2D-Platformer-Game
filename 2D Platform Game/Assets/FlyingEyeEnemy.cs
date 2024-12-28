@@ -174,13 +174,13 @@ public class FlyingEyeEnemy : EnemyBase
             return;
 
         Vector2 currentPos = transform.position;
-        float distToStart = Vector2.Distance(currentPos, m_patrolPath.startPosition);
-        float distToEnd = Vector2.Distance(currentPos, m_patrolPath.endPosition);
+        float distToStart = Vector2.Distance(currentPos, m_patrolPath.m_startPosition);
+        float distToEnd = Vector2.Distance(currentPos, m_patrolPath.m_endPosition);
 
         // En uzak noktayý bul
         Vector2 targetPos = (distToStart > distToEnd)
-            ? m_patrolPath.startPosition
-            : m_patrolPath.endPosition;
+            ? m_patrolPath.m_startPosition
+            : m_patrolPath.m_endPosition;
 
         float retreatSpeed = m_speed * 2f; // Kaçarken 2x
         Vector2 retreatDir = (targetPos - currentPos).normalized;
@@ -202,8 +202,8 @@ public class FlyingEyeEnemy : EnemyBase
     {
         if (m_patrolPath == null) return;
 
-        float minX = Mathf.Min(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
-        float maxX = Mathf.Max(m_patrolPath.startPosition.x, m_patrolPath.endPosition.x);
+        float minX = Mathf.Min(m_patrolPath.m_startPosition.x, m_patrolPath.m_endPosition.x);
+        float maxX = Mathf.Max(m_patrolPath.m_startPosition.x, m_patrolPath.m_endPosition.x);
 
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x, minX, maxX);
@@ -231,8 +231,8 @@ public class FlyingEyeEnemy : EnemyBase
 
         Vector2 currentPosition = transform.position;
         Vector2 targetPosition = (m_facingDirection > 0)
-            ? m_patrolPath.endPosition
-            : m_patrolPath.startPosition;
+            ? m_patrolPath.m_endPosition
+            : m_patrolPath.m_startPosition;
 
         float step = m_speed * Time.deltaTime;
         float newX = Mathf.MoveTowards(currentPosition.x, targetPosition.x, step);

@@ -44,7 +44,7 @@ public abstract class EnemyBase : MonoBehaviour
         if (m_patrolPath != null)
         {
             m_facingDirection = 1; // Default sað
-            transform.position = new Vector2(m_patrolPath.startPosition.x, transform.position.y);
+            transform.position = new Vector2(m_patrolPath.m_startPosition.x, transform.position.y);
         }
     }
 
@@ -141,14 +141,14 @@ public abstract class EnemyBase : MonoBehaviour
             return;
 
         Vector2 currentPosition = transform.position;
-        float distanceToStart = Vector2.Distance(currentPosition, m_patrolPath.startPosition);
-        float distanceToEnd = Vector2.Distance(currentPosition, m_patrolPath.endPosition);
+        float distanceToStart = Vector2.Distance(currentPosition, m_patrolPath.m_startPosition);
+        float distanceToEnd = Vector2.Distance(currentPosition, m_patrolPath.m_endPosition);
 
         Vector2 targetPosition;
         if (distanceToStart > distanceToEnd)
-            targetPosition = m_patrolPath.startPosition;
+            targetPosition = m_patrolPath.m_startPosition;
         else
-            targetPosition = m_patrolPath.endPosition;
+            targetPosition = m_patrolPath.m_endPosition;
 
         float directionToPlayer = Mathf.Sign(m_playerTransform.position.x - transform.position.x);
         m_facingDirection = (int)directionToPlayer;
@@ -160,8 +160,8 @@ public abstract class EnemyBase : MonoBehaviour
 
         // Devriye sýnýrýna oturt
         float clampedX = Mathf.Clamp(transform.position.x,
-                                     m_patrolPath.startPosition.x,
-                                     m_patrolPath.endPosition.x);
+                                     m_patrolPath.m_startPosition.x,
+                                     m_patrolPath.m_endPosition.x);
         transform.position = new Vector2(clampedX, transform.position.y);
     }
 

@@ -1,11 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMovementController))]
-[RequireComponent(typeof(PlayerCombatController))]
-[RequireComponent(typeof(PlayerHealthManager))]
-[RequireComponent(typeof(PlayerAnimControl))]
-[RequireComponent(typeof(PlayerInputHandler))]
-[RequireComponent(typeof(PlayerDetectionControl))]
 public class PlayerCore : MonoBehaviour
 {
     [Header("Player Type")]
@@ -19,6 +13,7 @@ public class PlayerCore : MonoBehaviour
     public PlayerAnimControl AnimControl { get; private set; }
     public PlayerInputHandler InputHandler { get; private set; }
     public PlayerDetectionControl DetectionControl { get; private set; }
+    public PlayerRespawn RespawnController { get; private set; }
 
     private GameManager m_gameManager;
 
@@ -30,8 +25,7 @@ public class PlayerCore : MonoBehaviour
         AnimControl = GetComponent<PlayerAnimControl>();
         InputHandler = GetComponent<PlayerInputHandler>();
         DetectionControl = GetComponent<PlayerDetectionControl>();
-
-        //m_gameManager = GameManager.Instance;
+        RespawnController = FindObjectOfType<PlayerRespawn>();
 
         // Initialize
         MovementController.Initialize(this);

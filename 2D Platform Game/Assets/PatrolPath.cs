@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class PatrolPath : MonoBehaviour
 {
-    public Vector2 startPosition, endPosition;
+    public Vector2 m_startPosition, m_endPosition;
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(startPosition, endPosition);
+        Gizmos.DrawLine(m_startPosition, m_endPosition);
 
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(startPosition, 0.1f);
+        Gizmos.DrawSphere(m_startPosition, 0.1f);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(endPosition, 0.1f);
+        Gizmos.DrawSphere(m_endPosition, 0.1f);
     }
 }

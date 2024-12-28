@@ -32,7 +32,7 @@ public class PlayerMovementController : MonoBehaviour
     private int m_facingDirection = 1;
 
     // Roll
-    private bool m_rolling = false;
+    public bool m_rolling = false;
     private float m_rollDuration = 8.0f / 14.0f;
     private float m_rollCurrentTime;
 
@@ -248,13 +248,32 @@ public class PlayerMovementController : MonoBehaviour
         if (m_rolling)
         {
             m_rollCurrentTime += Time.deltaTime;
+
+            // Raycast check for grid above player
+            Vector2 raycastStartPosition = new Vector2(transform.position.x, transform.position.y + 0.5f);
+
+            RaycastHit2D hit = Physics2D.Raycast(raycastStartPosition, Vector2.up, 1f, LayerMask.GetMask("Grid"));
+            bool hasBlockAbove = hit.collider != null;
+
+            // Raycast'i görselleþtir
+            Debug.DrawRay(raycastStartPosition, Vector2.up * 1f, hasBlockAbove ? Color.red : Color.green);
+
             if (m_rollCurrentTime > m_rollDuration)
             {
-                // Normal collider boyutuna dön
-                BoxCollider2D colliderToChange = m_body2d.GetComponent<BoxCollider2D>();
-                colliderToChange.offset = new Vector2(0, 0.670486f);
-                colliderToChange.size = new Vector2(colliderToChange.size.x, 1.183028f);
-                m_rolling = false;
+                if (!hasBlockAbove)
+                {
+                    // If not under grid, end roll normally
+                    BoxCollider2D colliderToChange = m_body2d.GetComponent<BoxCollider2D>();
+                    colliderToChange.offset = new Vector2(0, 0.670486f);
+                    colliderToChange.size = new Vector2(colliderToChange.size.x, 1.183028f);
+                    m_rolling = false;
+                }
+                else
+                {
+                    m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce / 2, m_body2d.velocity.y);
+                    //m_playerCore.AnimControl.SetTriggerRoll();
+                    m_rollCurrentTime = m_rollDuration - 0.2f;
+                }
             }
         }
     }

@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Sahneyi yükle
+        //DOTween.Kill();
         SceneManager.LoadScene(sceneName);
 
         if (m_fadeCanvasGroup != null)

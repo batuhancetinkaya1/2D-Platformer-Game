@@ -51,4 +51,9 @@ public class Star : MonoBehaviour, ICollectable
             }
         }
     }
+
+    public void OnDestroy()
+    {
+        DOTween.Kill(transform);
+    }
 }

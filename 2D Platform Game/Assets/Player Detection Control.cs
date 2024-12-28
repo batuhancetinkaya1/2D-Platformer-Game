@@ -13,7 +13,6 @@ public class PlayerDetectionControl : MonoBehaviour
     {
         if (collision.collider.CompareTag("Grid"))
         {
-            // Örnek: isStuck = true
             m_playerCore.MovementController.IsStuck = true;
         }
     }
@@ -22,8 +21,7 @@ public class PlayerDetectionControl : MonoBehaviour
     {
         if (collision.collider.CompareTag("Grid"))
         {
-            // isStuck = false
-            m_playerCore.MovementController.IsStuck =  false;
+            m_playerCore.MovementController.IsStuck = false;
         }
     }
 
@@ -31,13 +29,15 @@ public class PlayerDetectionControl : MonoBehaviour
     {
         if (collision.CompareTag("EndDoor"))
         {
-            //loadscene fightscene if player get the key FightScene = "FightScene";
+            if (m_playerCore.RespawnController.HasKey())
+            {
+                UIManager.Instance.LoadFightScene();
+            }
         }
 
         if (collision.CompareTag("DiePoint"))
         {
             m_playerCore.HealthManager.ReceiveDamage(m_playerCore.HealthManager.CurrentHealth);
-            //oyuncuyu öldür
         }
     }
 

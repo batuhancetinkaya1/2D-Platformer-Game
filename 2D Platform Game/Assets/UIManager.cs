@@ -51,6 +51,14 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.ControlTime(true);
     }
 
+    public void LoadFightScene()
+    {
+        HideAllPanels();
+        GameManager.Instance.ChangeState(GameStates.FinalFight);
+        GameManager.Instance.LoadScene(SceneNames.MenuScene);
+        GameManager.Instance.ControlTime(true);
+    }
+
     public void ShowPauseMenu()
     {
         m_gamePanel.SetActive(false);
