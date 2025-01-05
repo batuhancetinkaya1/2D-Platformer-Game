@@ -47,6 +47,7 @@ public class Key : MonoBehaviour, ICollectable
             PlayerCore playerCore = collision.GetComponent<PlayerCore>();
             if (playerCore != null)
             {
+                AudioManager.Instance.PlaySFXWithNewSource("Key", transform.position);
                 OnCollect(playerCore);
             }
         }

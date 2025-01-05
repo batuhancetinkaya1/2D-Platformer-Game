@@ -48,7 +48,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 6276
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -138,7 +138,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 132
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -298,7 +298,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 132
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -378,7 +378,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 132
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -458,7 +458,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 132
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -711,7 +711,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_maxHealth: 500
   m_healthSlider: {fileID: 0}
-  m_fillImage: {fileID: 0}
+  m_healthText: {fileID: 0}
   m_healthChangeDuration: 0.5
   IsBlocking: 0
 --- !u!114 &4901808089387330577
@@ -726,7 +726,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e9526d83c13e64e8a44792da74cb7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_respawnPoint: {fileID: 0}
+  m_respawnPoint1: {fileID: 0}
+  m_respawnPoint2: {fileID: 0}
+  m_spawnPoint2Visual: {fileID: 0}
 --- !u!114 &8125684711131701666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -746,6 +748,7 @@ MonoBehaviour:
   m_wallStickTime: 1
   m_wallJumpTime: 0.2
   dustPrefab: {fileID: 1038168246061390451, guid: 8b8c8cc6774fb074cb9139cc631b108e, type: 3}
+  m_rolling: 0
 --- !u!114 &7970016792755039888
 MonoBehaviour:
   m_ObjectHideFlags: 0

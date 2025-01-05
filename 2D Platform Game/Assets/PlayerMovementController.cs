@@ -148,6 +148,11 @@ public class PlayerMovementController : MonoBehaviour
         // Animasyon
         if (m_playerCore && m_playerCore.AnimControl)
             m_playerCore.AnimControl.SetRunningState(inputX);
+
+        //if (m_grounded && inputX != 0)
+        //{
+        //    AudioManager.Instance.PlaySFXWithNewSource("Step", transform.position);
+        //}
     }
     #endregion
 
@@ -172,6 +177,7 @@ public class PlayerMovementController : MonoBehaviour
 
         m_body2d.velocity = new Vector2(m_body2d.velocity.x, jumpForce);
         m_groundSensor.Disable(0.2f);
+        AudioManager.Instance.PlaySFXWithNewSource("Jump", transform.position);
     }
 
     private void PerformWallJump()
@@ -197,6 +203,7 @@ public class PlayerMovementController : MonoBehaviour
 
         m_spriteRenderer.flipX = (-m_wallSlidingSide < 0);
         m_facingDirection = (-m_wallSlidingSide < 0) ? -1 : 1;
+        AudioManager.Instance.PlaySFXWithNewSource("Jump", transform.position);
     }
     #endregion
 
@@ -296,6 +303,7 @@ public class PlayerMovementController : MonoBehaviour
         {
             m_grounded = true;
             m_playerCore.AnimControl.SetGrounded(m_grounded);
+            AudioManager.Instance.PlaySFXWithNewSource("Land", transform.position);
         }
         else if (m_grounded && !m_groundSensor.State())
         {

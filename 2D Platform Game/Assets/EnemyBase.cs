@@ -109,6 +109,7 @@ public abstract class EnemyBase : MonoBehaviour
         }
         else
         {
+            AudioManager.Instance.PlaySFXWithNewSource("Cut1", transform.position);
             m_animator.SetTrigger("TakeHit");
         }
     }

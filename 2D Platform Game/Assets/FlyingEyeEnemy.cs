@@ -249,6 +249,7 @@ public class FlyingEyeEnemy : EnemyBase
     protected override IEnumerator Die()
     {
         m_isDead = true;
+        AudioManager.Instance.PlaySFXWithNewSource("EyeDie", transform.position);
         m_animator.SetTrigger("Death");
 
         AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);

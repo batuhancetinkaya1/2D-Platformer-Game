@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
             m_fadeCanvasGroup.alpha = 0; // Ýlk baþta görünmez.
 
         ControlTime(false); //buna dikkat edelim
+        AudioManager.Instance.PlayMusic("MenuMusic");
     }
 
     public void ChangeState(GameStates newState)

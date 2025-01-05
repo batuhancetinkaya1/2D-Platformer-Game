@@ -19,13 +19,13 @@ public class PlayerCore : MonoBehaviour
 
     private void Awake()
     {
-        MovementController = GetComponent<PlayerMovementController>();
         CombatController = GetComponent<PlayerCombatController>();
         HealthManager = GetComponent<PlayerHealthManager>();
         AnimControl = GetComponent<PlayerAnimControl>();
         InputHandler = GetComponent<PlayerInputHandler>();
         DetectionControl = GetComponent<PlayerDetectionControl>();
         RespawnController = FindObjectOfType<PlayerRespawn>();
+        MovementController = GetComponent<PlayerMovementController>();
 
         // Initialize
         MovementController.Initialize(this);

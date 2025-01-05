@@ -10,9 +10,17 @@ public class UIManager : MonoBehaviour
     public GameObject m_mainMenuPanel;
     public GameObject m_creditsPanel;
     public GameObject m_controlsPanel;
+
+    // Yeni eklenen ArenaPanel
+    public GameObject m_arenaPanel;
+
+    // Volume Slider (Menu’deki)
+    public Slider m_volumeSlider;
+
     [Header("Game Panels")]
     public GameObject m_pauseMenuPanel;
     public GameObject m_gamePanel;
+
     [Header("GameOver Panel")]
     public GameObject m_gameOverPanel;
 
@@ -31,32 +39,80 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         ResetStars();
     }
+
+    private void Start()
+    {
+        // VolumeSlider PlayerPrefs ayarý:
+        if (m_volumeSlider != null)
+        {
+            float storedVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
+            m_volumeSlider.value = storedVolume;
+
+            // Slider'daki deðiþim event'ini baðla
+            m_volumeSlider.onValueChanged.AddListener(OnVolumeSliderChanged);
+
+            // AudioManager üzerinden ses ayarlýyorsanýz, orada volume set fonksiyonu çaðýrabilirsiniz.
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.SetMusicVolume(storedVolume);
+            }
+            else
+            {
+                Debug.LogWarning("AudioManager.Instance is null. Ensure AudioManager is correctly initialized.");
+            }
+        }
+    }
+
+    #region Volume Kontrol
+    // VolumeSlider’ýn OnValueChanged event’ine baðlanýr:
+    public void OnVolumeSliderChanged(float value)
+    {
+        // Hem AudioManager'daki müzik sesini hem de PlayerPrefs kaydýný ayarla
+        AudioManager.Instance.SetMusicVolume(value);
+        PlayerPrefs.SetFloat("MasterVolume", value);
+        PlayerPrefs.Save();
+    }
+
+    #endregion
 
     #region Panel Control
     public void LoadGameScene()
     {
         HideAllPanels();
+        AudioManager.Instance.StopPlaylist();
+        AudioManager.Instance.PlaySequentialMusic("GameMusic1", "GameMusic2");
         GameManager.Instance.ChangeState(GameStates.GameOn);
         GameManager.Instance.LoadScene(SceneNames.GameScene);
         GameManager.Instance.ControlTime(false);
     }
 
+    // Menü Sahnesi
     public void LoadMenuScene()
     {
         HideAllPanels();
+        AudioManager.Instance.StopPlaylist();
+        AudioManager.Instance.PlayMusic("MenuMusic");
         GameManager.Instance.ChangeState(GameStates.Menu);
         GameManager.Instance.LoadScene(SceneNames.MenuScene);
         GameManager.Instance.ControlTime(true);
     }
 
+    // Arena/Fight Sahnesi
     public void LoadFightScene()
     {
         HideAllPanels();
+        AudioManager.Instance.StopPlaylist();
+        AudioManager.Instance.PlaySequentialMusic("ArenaMusic1", "ArenaMusic2");
         GameManager.Instance.ChangeState(GameStates.FinalFight);
-        GameManager.Instance.LoadScene(SceneNames.MenuScene);
-        GameManager.Instance.ControlTime(true);
+
+        // Burada sahne ismini FightScene olarak çaðýrýn:
+        GameManager.Instance.LoadScene(SceneNames.FightScene);
+
+        // Ýsterseniz zamaný dondurun ya da dondurmayýn, tasarýma baðlý:
+        GameManager.Instance.ControlTime(false);
     }
 
     public void ShowPauseMenu()
@@ -97,6 +153,22 @@ public class UIManager : MonoBehaviour
         ShowMainMenu();
     }
 
+    // Yeni: ArenaPanel’i gösteren fonksiyon
+    public void ShowArenaPanel()
+    {
+        HideAllPanels();
+        if (m_arenaPanel != null)
+            m_arenaPanel.SetActive(true);
+    }
+
+    public void HideArenaPanel()
+    {
+        if (m_arenaPanel != null)
+            m_arenaPanel.SetActive(false);
+
+        ShowMainMenu();
+    }
+
     private void HideAllPanels()
     {
         if (m_mainMenuPanel != null) m_mainMenuPanel.SetActive(false);
@@ -105,6 +177,9 @@ public class UIManager : MonoBehaviour
         if (m_pauseMenuPanel != null) m_pauseMenuPanel.SetActive(false);
         if (m_gameOverPanel != null) m_gameOverPanel.SetActive(false);
         if (m_gamePanel != null) m_gamePanel.SetActive(false);
+
+        // ArenaPanel da kapatýlsýn:
+        if (m_arenaPanel != null) m_arenaPanel.SetActive(false);
     }
 
     private void ShowMainMenu()
@@ -120,11 +195,21 @@ public class UIManager : MonoBehaviour
         m_totalStars += amount;
         UpdateStarText();
     }
+    public void RemoveStars(int amount)
+    {
+        m_totalStars -= amount;
+        UpdateStarText();
+    }
 
     public void ResetStars()
     {
         m_totalStars = 0;
         UpdateStarText();
+    }
+
+    public int StarCount()
+    {
+        return m_totalStars;
     }
 
     private void UpdateStarText()
@@ -144,18 +229,113 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
+    private void PlayButtonSound()
+    {
+        // Ses efektlerini AudioManager üzerinden tetikleyebilirsiniz:
+        AudioManager.Instance.PlaySFX("Button");
+    }
+
     #region Buttons MenuScene
-    public void OnPlayButton() => LoadGameScene();
-    public void OnCreditsButton() => ShowCredits();
-    public void OnControlsButton() => ShowControls();
-    public void OnHideCreditsButton() => HideCredits();
-    public void OnHideControlsButton() => HideControls();
+    public void OnPlayButton()
+    {
+        PlayButtonSound();
+        LoadGameScene();
+    }
+
+    public void OnCreditsButton()
+    {
+        PlayButtonSound();
+        ShowCredits();
+    }
+
+    public void OnControlsButton()
+    {
+        PlayButtonSound();
+        ShowControls();
+    }
+
+    public void OnHideCreditsButton()
+    {
+        PlayButtonSound();
+        HideCredits();
+    }
+
+    public void OnHideControlsButton()
+    {
+        PlayButtonSound();
+        HideControls();
+    }
+
+    // ArenaPanel’i açan buton:
+    public void OnArenaButton()
+    {
+        PlayButtonSound();
+        ShowArenaPanel();
+    }
+    #endregion
+
+    #region ArenaPanel Buttons
+    // Bu üç fonksiyon da arenada hangi modu seçtiðini saklayacak:
+    public void OnPVPButton()
+    {
+        PlayButtonSound();
+
+        // Seçimi PlayerPrefs’a kaydet
+        PlayerPrefs.SetString("ArenaMode", "PVP");
+        PlayerPrefs.Save();
+
+        // Fight sahnesini yükle
+        LoadFightScene();
+    }
+
+    public void OnPVBButton()
+    {
+        PlayButtonSound();
+        PlayerPrefs.SetString("ArenaMode", "PVB");
+        PlayerPrefs.Save();
+
+        LoadFightScene();
+    }
+
+    public void OnAIvsAIButton()
+    {
+        PlayButtonSound();
+        PlayerPrefs.SetString("ArenaMode", "AIvsAI");
+        PlayerPrefs.Save();
+
+        LoadFightScene();
+    }
+
+    public void OnReturnMenuButtonFromArena()
+    {
+        PlayButtonSound();
+        HideArenaPanel();
+    }
     #endregion
 
     #region Buttons GameScene
-    public void OnReturnMenuButton() => LoadMenuScene();
-    public void OnPauseButton() => ShowPauseMenu();
-    public void OnContinueButton() => HidePauseMenu();
-    public void OnGameOverReturnMenu() => LoadMenuScene();
+    public void OnReturnMenuButton()
+    {
+        PlayButtonSound();
+        LoadMenuScene();
+    }
+
+    public void OnPauseButton()
+    {
+        PlayButtonSound();
+        ShowPauseMenu();
+    }
+
+    public void OnContinueButton()
+    {
+        PlayButtonSound();
+        HidePauseMenu();
+    }
+
+    public void OnGameOverReturnMenu()
+    {
+        PlayButtonSound();
+        LoadMenuScene();
+    }
     #endregion
 }

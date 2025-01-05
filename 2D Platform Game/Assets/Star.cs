@@ -47,6 +47,7 @@ public class Star : MonoBehaviour, ICollectable
             PlayerCore playerCore = collision.GetComponent<PlayerCore>();
             if (playerCore != null)
             {
+                AudioManager.Instance.PlaySFXWithNewSource("Star", transform.position);
                 OnCollect(playerCore);
             }
         }

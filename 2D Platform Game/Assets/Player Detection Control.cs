@@ -31,6 +31,7 @@ public class PlayerDetectionControl : MonoBehaviour
         {
             if (m_playerCore.RespawnController.HasKey())
             {
+                AudioManager.Instance.PlaySFX("Victory");
                 UIManager.Instance.LoadFightScene();
             }
         }

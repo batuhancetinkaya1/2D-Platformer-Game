@@ -114,6 +114,7 @@ public class MushroomEnemy : EnemyBase
     protected override IEnumerator Die()
     {
         m_isDead = true;
+        AudioManager.Instance.PlaySFXWithNewSource("MushroomDie", transform.position);
         m_animator.SetTrigger("Death");
 
         AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);

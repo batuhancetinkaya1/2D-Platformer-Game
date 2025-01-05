@@ -48,6 +48,7 @@ public class PlayerCombatController : MonoBehaviour
                 m_currentAttack = 1;
 
             m_playerCore.AnimControl.SetTriggerAttack(m_currentAttack);
+            AudioManager.Instance.PlaySFXWithNewSource("SwordBasic", transform.position);
 
             if (m_meleeRangeSensor.State())
             {
