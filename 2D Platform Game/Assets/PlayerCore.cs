@@ -17,15 +17,20 @@ public class PlayerCore : MonoBehaviour
 
     private GameManager m_gameManager;
 
+    public delegate void PlayerSpawnHandler();
+    public static event PlayerSpawnHandler OnPlayerSpawn;
+
     private void Awake()
     {
+        OnPlayerSpawn?.Invoke();
+
+        MovementController = GetComponent<PlayerMovementController>();
         CombatController = GetComponent<PlayerCombatController>();
         HealthManager = GetComponent<PlayerHealthManager>();
         AnimControl = GetComponent<PlayerAnimControl>();
         InputHandler = GetComponent<PlayerInputHandler>();
         DetectionControl = GetComponent<PlayerDetectionControl>();
         RespawnController = FindObjectOfType<PlayerRespawn>();
-        MovementController = GetComponent<PlayerMovementController>();
 
         // Initialize
         MovementController.Initialize(this);

@@ -36,7 +36,7 @@ public class PlayerInputHandler : MonoBehaviour
         if (m_playerCore == null) return;
 
         // Eðer bu player AI ise InputHandler’ý kullanma
-        if (m_playerCore.PlayerType == PlayerType.AI)
+        if (m_playerCore.PlayerType == PlayerType.AI1 || m_playerCore.PlayerType == PlayerType.AI2)
             return;
 
         if (GameManager.Instance.CurrentState == GameStates.GameOn || GameManager.Instance.CurrentState == GameStates.FinalFight)

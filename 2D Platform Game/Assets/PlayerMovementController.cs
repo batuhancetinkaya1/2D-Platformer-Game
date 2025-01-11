@@ -22,10 +22,10 @@ public class PlayerMovementController : MonoBehaviour
     private SensorPlayer m_wallSensorR1, m_wallSensorR2;
     private SensorPlayer m_wallSensorL1, m_wallSensorL2;
 
-    private bool m_grounded = false;
+    public bool m_grounded = false;
     private bool m_isWallSliding = false;
     private bool m_wallJumping = false;
-    private bool m_isStuck = false;
+    public bool m_isStuck = false;
     private float m_wallJumpingCurrentTime = 0f;
     private float m_wallStickCounter = 0f;
     private int m_wallSlidingSide = 0;
@@ -241,12 +241,16 @@ public class PlayerMovementController : MonoBehaviour
                 m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
             }
 
+            // Melee sensor yönünü güncelle
+            m_playerCore.DetectionControl.UpdateMeleeSensorScale(m_facingDirection);
+
             // Collider boyutu kýsaltma (isteðe baðlý)
             BoxCollider2D colliderToChange = m_body2d.GetComponent<BoxCollider2D>();
             colliderToChange.offset = new Vector2(0, 0.2f);
             colliderToChange.size = new Vector2(colliderToChange.size.x, 0.3f);
         }
     }
+
     #endregion
 
     #region Private Helpers
@@ -301,6 +305,9 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (!m_grounded && m_groundSensor.State())
         {
+            Debug.Log(m_groundSensor.State());
+            m_groundSensor.Stater();
+
             m_grounded = true;
             m_playerCore.AnimControl.SetGrounded(m_grounded);
             AudioManager.Instance.PlaySFXWithNewSource("Land", transform.position);

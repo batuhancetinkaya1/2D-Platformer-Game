@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class EnemyBase : MonoBehaviour
 {
@@ -35,8 +36,22 @@ public abstract class EnemyBase : MonoBehaviour
     {
         m_animator = GetComponent<Animator>();
         m_rb = GetComponent<Rigidbody2D>();
-        m_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        
         m_meleeRangeSensor = transform.Find("MeleeRangeSensor").GetComponent<SensorPlayer>();
+    }
+    private void OnEnable()
+    {
+        PlayerCore.OnPlayerSpawn += HandlePlayerSpawn;
+    }
+
+    private void OnDisable()
+    {
+        PlayerCore.OnPlayerSpawn -= HandlePlayerSpawn;
+    }
+
+    private void HandlePlayerSpawn()
+    {
+        m_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     protected virtual void Start()

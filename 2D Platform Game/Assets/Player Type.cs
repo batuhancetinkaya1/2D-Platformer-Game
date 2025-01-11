@@ -2,5 +2,6 @@ public enum PlayerType
 {
     PlayerOne,
     PlayerTwo,
-    AI
+    AI1,
+    AI2
 }

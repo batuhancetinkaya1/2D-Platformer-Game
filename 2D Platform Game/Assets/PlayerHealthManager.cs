@@ -10,8 +10,8 @@ public class PlayerHealthManager : MonoBehaviour
     private float m_currentHealth;
 
     [Header("UI")]
-    [SerializeField] private Slider m_healthSlider; // Saðlýk barý slider
-    [SerializeField] private TMP_Text m_healthText; // Saðlýk deðeri gösterecek TextMeshPro
+    [SerializeField] public Slider m_healthSlider; // Saðlýk barý slider
+    [SerializeField] public TMP_Text m_healthText; // Saðlýk deðeri gösterecek TextMeshPro
 
     [SerializeField] private float m_healthChangeDuration = 0.5f; // Slider'ýn animasyon süresi
 
@@ -21,6 +21,8 @@ public class PlayerHealthManager : MonoBehaviour
 
     public float CurrentHealth => m_currentHealth;
     public float MaxHealth => m_maxHealth;
+
+    public bool IsAlive => m_currentHealth > 0;
 
     public void Initialize(PlayerCore core)
     {
@@ -32,17 +34,33 @@ public class PlayerHealthManager : MonoBehaviour
         m_currentHealth = m_maxHealth;
 
         // Saðlýk Slider'ýný otomatik bulma
-        if (!m_healthSlider)
+        if (!m_healthSlider && m_playerCore.PlayerType == PlayerType.PlayerOne || m_playerCore.PlayerType == PlayerType.AI1)
         {
-            var sliderTrans = transform.Find("Canvas/HealthBar");
+            var sliderTrans = GameObject.Find("Canvas/GamePanel/HealthBar");
+            if (sliderTrans != null)
+                m_healthSlider = sliderTrans.GetComponent<Slider>();
+        }
+        else if (!m_healthSlider && m_playerCore.PlayerType == PlayerType.PlayerTwo || m_playerCore.PlayerType == PlayerType.AI2)
+        {
+            var sliderTrans = GameObject.Find("Canvas/GamePanel/HealthBarOpposite");
             if (sliderTrans != null)
                 m_healthSlider = sliderTrans.GetComponent<Slider>();
         }
 
-        if (m_healthSlider != null)
+        if (m_healthSlider != null && m_playerCore.PlayerType == PlayerType.PlayerOne || m_playerCore.PlayerType == PlayerType.AI1)
         {
+            var sliderTex = GameObject.Find("Canvas/GamePanel/HealthBar/HealthTex").GetComponent<TMP_Text>();
             m_healthSlider.maxValue = m_maxHealth;
             m_healthSlider.value = m_currentHealth;
+            m_healthText = sliderTex;
+            m_healthText.text = "100";
+        }
+        else if(m_healthSlider && m_playerCore.PlayerType == PlayerType.PlayerTwo || m_playerCore.PlayerType == PlayerType.AI2)
+        {
+            var sliderTex = GameObject.Find("Canvas/GamePanel/HealthBarOpposite/HealthTex").GetComponent<TMP_Text>();
+            m_healthSlider.maxValue = m_maxHealth;
+            m_healthSlider.value = m_currentHealth;
+            m_healthText = sliderTex;
             m_healthText.text = "100";
         }
     }

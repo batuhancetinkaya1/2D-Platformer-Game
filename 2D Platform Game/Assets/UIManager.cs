@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour
 
     [Header("GameOver Panel")]
     public GameObject m_gameOverPanel;
+    public RawImage m_winImage;
+    public RawImage m_loseImage;
 
     [Header("Game UI Elements")]
     public TMP_Text m_starText;
@@ -113,6 +115,27 @@ public class UIManager : MonoBehaviour
 
         // Ýsterseniz zamaný dondurun ya da dondurmayýn, tasarýma baðlý:
         GameManager.Instance.ControlTime(false);
+    }
+
+    public void ShowGameOverPanel(bool isPlayerWin)
+    {
+        m_gamePanel.SetActive(false);
+        m_gameOverPanel.SetActive(true);
+
+        if (isPlayerWin)
+        {
+            Debug.Log("WÝN");
+            m_winImage.enabled = true;
+            m_winImage.gameObject.SetActive(true);
+        }
+        else if (!isPlayerWin)
+        {
+            Debug.Log("LOSE");
+            m_loseImage.enabled = true;
+            m_loseImage.gameObject.SetActive(true);
+        }
+
+        GameManager.Instance.ControlTime(true);
     }
 
     public void ShowPauseMenu()

@@ -35,7 +35,23 @@ public class CameraController : MonoBehaviour
             m_cam = Camera.main;
             Debug.LogWarning("CameraController: Script is not on the main camera, using Camera.main instead.");
         }
+        m_currentZoom = m_defaultZoom;
+    }
 
+    private void OnEnable()
+    {
+        GameManager.OnGameStateChange += HandleGameStateChange;
+        PlayerCore.OnPlayerSpawn += HandlePlayerSpawn;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameStateChange -= HandleGameStateChange;
+        PlayerCore.OnPlayerSpawn -= HandlePlayerSpawn;
+    }
+
+    private void HandlePlayerSpawn()
+    {
         // Eðer sahnede "Player" tag'li obje yoksa m_target null kalýr
         if (m_target == null)
         {
@@ -49,18 +65,6 @@ public class CameraController : MonoBehaviour
                 Debug.LogWarning("CameraController: No Player found with tag 'Player'.");
             }
         }
-
-        m_currentZoom = m_defaultZoom;
-    }
-
-    private void OnEnable()
-    {
-        GameManager.OnGameStateChange += HandleGameStateChange;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.OnGameStateChange -= HandleGameStateChange;
     }
 
     private void FixedUpdate()

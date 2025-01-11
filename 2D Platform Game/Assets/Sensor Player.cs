@@ -19,6 +19,10 @@ public class SensorPlayer : MonoBehaviour
             return false;
         return m_Colliders.Count > 0;
     }
+    public void Stater()
+    {
+        Debug.Log(m_Colliders);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {

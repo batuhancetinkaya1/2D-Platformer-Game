@@ -48,7 +48,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 6276
+    m_Bits: 7556
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -138,7 +138,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 132
+    m_Bits: 7116
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -218,7 +218,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 132
+    m_Bits: 7116
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -298,7 +298,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 132
+    m_Bits: 7116
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -390,7 +390,7 @@ CapsuleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 6604
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -431,6 +431,7 @@ GameObject:
   - component: {fileID: 1345433136607874206}
   - component: {fileID: 936553211872292938}
   - component: {fileID: 7999120616092458259}
+  - component: {fileID: 4281989448315800373}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Player
@@ -448,7 +449,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3128247144072076559}
@@ -668,6 +669,8 @@ MonoBehaviour:
   m_wallStickTime: 1
   m_wallJumpTime: 0.2
   dustPrefab: {fileID: 1038168246061390451, guid: 8b8c8cc6774fb074cb9139cc631b108e, type: 3}
+  m_grounded: 0
+  m_isStuck: 0
   m_rolling: 0
 --- !u!114 &5772940077834881058
 MonoBehaviour:
@@ -731,6 +734,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a16a555505722254ab928c881f6f4b26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4281989448315800373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5969480752793417388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1325da7db952e048ae7df98f84fbd17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_decisionInterval: 0.25
+  m_detectionRange: 8
+  m_idealAttackRange: 1.5
+  m_blockReactionTime: 0.2
+  m_blockChance: 0.5
+  m_rollInsteadOfJumpChance: 0.3
+  m_randomAggression: 0.5
 --- !u!1 &7636895886393274553
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,7 +801,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 132
+    m_Bits: 7116
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2

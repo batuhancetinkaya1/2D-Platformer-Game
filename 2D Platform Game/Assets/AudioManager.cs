@@ -44,6 +44,13 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// PlayerPrefs'ten MasterVolume'u çeken basit bir property.
+    /// Ýsterseniz bu deðeri bir slider ile set edebilirsiniz.
+    /// Örn: PlayerPrefs.SetFloat("MasterVolume", newValue);
+    /// </summary>
+    private float MasterVolume => PlayerPrefs.GetFloat("MasterVolume", 1f);
+
     #region Tekil Müzik Çalma
     public void PlayMusic(string clipName, bool restart = false)
     {
@@ -54,12 +61,16 @@ public class AudioManager : MonoBehaviour
         }
 
         AudioClipData data = m_clipDict[clipName];
+
+        // Eðer ayný parça çalýyorsa ve restart istenmiyorsa, tekrar baþlatma.
         if (musicSource.isPlaying && musicSource.clip == data.clip && !restart)
             return;
 
         musicSource.clip = data.clip;
-        musicSource.volume = data.volume;
-        musicSource.loop = data.loop; // Eðer tek parça loop edecekse burasý true
+
+        // MasterVolume’u her seferinde çarparak kullanýyoruz
+        musicSource.volume = data.volume * MasterVolume;
+        musicSource.loop = data.loop;
         musicSource.Play();
     }
 
@@ -99,6 +110,10 @@ public class AudioManager : MonoBehaviour
         StopMusic();
     }
 
+    /// <summary>
+    /// Playlist mantýðý: klipleri sýrayla çal, bitince bir sonraki klibe geç.
+    /// Bütün klipler bitince baþa dön.
+    /// </summary>
     private IEnumerator PlaySequentialRoutine(string[] clipNames)
     {
         while (true) // Sürekli döngü
@@ -112,17 +127,19 @@ public class AudioManager : MonoBehaviour
                 }
 
                 AudioClipData data = m_clipDict[clipName];
-                musicSource.loop = false; // Playlist mantýðý için tek tek parçalarý loop kapatarak çalýyoruz
+
+                // Playlist mantýðýnda her bir klipte loop kapalý çalýnýr.
+                musicSource.loop = false;
+
+                // Volume ayarýný her parça baþýnda tekrar yapýyoruz
                 musicSource.clip = data.clip;
-                musicSource.volume = data.volume;
+                musicSource.volume = data.volume * MasterVolume;
                 musicSource.Play();
 
-                // Müzik bitene kadar bekleyelim
+                // Bu klip bitene kadar bekle
                 yield return new WaitWhile(() => musicSource.isPlaying);
-
-                // Bir sonraki þarkýya geçecek
             }
-            // Tüm liste bitince tekrar baþa döner (while(true) sayesinde)
+            // Tüm liste bittiðinde while(true) sayesinde baþa döner.
         }
     }
     #endregion
@@ -137,7 +154,9 @@ public class AudioManager : MonoBehaviour
         }
 
         AudioClipData data = m_clipDict[clipName];
-        sfxSource.PlayOneShot(data.clip, data.volume);
+
+        // OneShot ile çalarken de MasterVolume ile çarpýyoruz
+        sfxSource.PlayOneShot(data.clip, data.volume * MasterVolume);
     }
 
     public void PlaySFXWithNewSource(string clipName, Vector3 position)
@@ -153,15 +172,20 @@ public class AudioManager : MonoBehaviour
         AudioSource tempSource = new GameObject("TempAudio").AddComponent<AudioSource>();
         tempSource.transform.position = position;
         tempSource.clip = data.clip;
-        tempSource.volume = data.volume;
+        tempSource.volume = data.volume * MasterVolume;
         tempSource.loop = data.loop;
         tempSource.Play();
 
+        // Klip süresi bitince geçici objeyi yok et
         Destroy(tempSource.gameObject, data.clip.length);
     }
     #endregion
 
     #region Volume Kontrol
+    /// <summary>
+    /// Bu method, müzik volümünü *direkt* ayarlar.
+    /// Dilerseniz MasterVolume * MusicVolume þeklinde çarpma yapabilirsiniz.
+    /// </summary>
     public void SetMusicVolume(float volume)
     {
         if (musicSource != null)
@@ -175,6 +199,10 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bu method, sfx volümünü *direkt* ayarlar.
+    /// Dilerseniz MasterVolume * SFXVolume þeklinde çarpma yapabilirsiniz.
+    /// </summary>
     public void SetSFXVolume(float volume)
     {
         if (sfxSource != null)
