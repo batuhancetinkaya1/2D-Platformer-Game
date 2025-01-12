@@ -8,7 +8,7 @@ Welcome to the **2D Platformer Game** repository! This document provides a detai
 3. [How to Play](#how-to-play)
 4. [Controls](#controls)
 5. [Features and Systems](#features-and-systems)
-6. [Enemy Behavior](#enemy-behavior)
+6. [Characters](#characters)
 7. [Game Modes](#game-modes)
 8. [Handcrafted Assets](#handcrafted-assets)
 9. [Technologies Used](#technologies-used)
@@ -110,7 +110,13 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 ---
 
-## Enemy Behavior
+## Characters
+### Player
+![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
+
+- 
+- 
+
 ### Mushroom
 ![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
 
