@@ -117,10 +117,14 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 - 
 - 
 
-### Cats
-![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
+### Cat
+
 
 - Waits for its stars. If you do not give the stars to the cat, it will blocks the way the key, which is required for completing the game.
+
+#### Star Map
+![image](https://github.com/user-attachments/assets/d2272803-01f9-4cbb-ba76-87b59b869e93)
+
 
 
 ### Mushroom
