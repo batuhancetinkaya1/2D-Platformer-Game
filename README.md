@@ -119,9 +119,9 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ![Cat-1-Sitting](https://github.com/user-attachments/assets/5cddf9d9-4b0a-42ca-91ca-27017e2dc62f)
 
 - Waits for its stars. If you do not give the stars to the cat, it will blocks the way the key, which is required for completing the game.
-- Here is a map for the stars, you have to collect all (5) of them. 
+- Here is a map for the stars, you have to collect all (5) of them. The square shows where the cat is.
 
-![image](https://github.com/user-attachments/assets/d2272803-01f9-4cbb-ba76-87b59b869e93)
+![image](https://github.com/user-attachments/assets/1769d899-46fa-4edc-b559-ac9931e8f4e4)
 
 ### Mushroom
 ![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
