@@ -174,7 +174,7 @@ The key and door sprites, were carefully crafted by hand to give the game a uniq
 |--------------------------------------|------------|------------|
 | *Total*                                    | *100*    | *100*    |
 | Extra 50 for time-triggered theme change   | -          | 50          |
-| *Total of total *                            | *100*    | *150*    |
+| *Total of total*                            | *100*    | *150*    |
 
 ---
 
