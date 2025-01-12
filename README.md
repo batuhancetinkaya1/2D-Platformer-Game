@@ -98,10 +98,11 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ---
 
 ## Handcrafted Assets
-All in-game assets, including the key and door sprites, were carefully crafted by hand to give the game a unique and personalized aesthetic.
+The key and door sprites, were carefully crafted by hand to give the game a unique and personalized aesthetic.
 
 ### Key Sprite
-![Key Sprite](./Assets/Prefabs/ImagesSprite-0002.png)
+![image](https://github.com/user-attachments/assets/66c32336-d24c-4807-8550-dfc1ef9a747f)
+
 
 ### Door Sprite
 ![Door Sprite](./Assets/Prefabs/Images/Sprite-0003.png)
