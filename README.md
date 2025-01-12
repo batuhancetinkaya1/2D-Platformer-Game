@@ -143,8 +143,13 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 - **Standard Mode**: Progress through levels, defeat enemies, and complete objectives.
 - **Arena Mode**: Choose from the following options:
   - **PvB**: Player vs Bots.
+  - ![WhatsApp Görsel 2025-01-12 saat 23 22 57_6c67a368](https://github.com/user-attachments/assets/32afa05d-43e7-442c-acb1-d7d097171715)
+
   - **PvP**: Player vs Player.
+  - ![WhatsApp Görsel 2025-01-12 saat 23 24 58_d2f179a0](https://github.com/user-attachments/assets/2ecb00b5-f608-4c53-b970-18f8245839ff)
+
   - **AI vs AI**: Watch AI-controlled characters battle it out.
+  - ![WhatsApp Görsel 2025-01-12 saat 23 05 33_5fa677ae](https://github.com/user-attachments/assets/c661d6a4-62eb-4705-aed1-633ab5416d09)
 
 ---
 
