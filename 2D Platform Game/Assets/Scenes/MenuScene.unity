@@ -440,6 +440,8 @@ MonoBehaviour:
   m_pauseMenuPanel: {fileID: 0}
   m_gamePanel: {fileID: 0}
   m_gameOverPanel: {fileID: 0}
+  m_winImage: {fileID: 0}
+  m_loseImage: {fileID: 0}
   m_starText: {fileID: 0}
   m_keyImage: {fileID: 0}
 --- !u!1 &772438657
@@ -3712,12 +3714,24 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Action            |             Key
+  m_text: 'Action               |             Key
 
     ------------------------------------
 
     Move
-    Right    |              D'
+    Right  |          D
+
+    Move Left     |             A
+
+    Jump                 
+    |          Space
+
+    Attack                     |      Mouse Left
+
+    Block                      
+    |    Mouse Right
+
+    Roll            |             X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3751,8 +3765,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 16
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
