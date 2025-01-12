@@ -17,7 +17,7 @@ Welcome to the **2D Platformer Game** repository! This document provides a detai
 ---
 
 ## Introduction
-The **2D Platformer Game** is an engaging Unity-based platformer featuring challenging levels, dynamic backgrounds, and an exciting final boss fight. Players navigate through various obstacles, defeat enemies, and unlock secrets to progress through the game.
+The **2D Platformer Game** is an engaging Unity-based platformer featuring challenging level, dynamic backgrounds, and an exciting final boss fight. Players navigate through various obstacles, defeat enemiess to progress through the game.
 
 ---
 
@@ -64,8 +64,8 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 ## Features and Systems
 ### Key Mechanics
-- **Star Collection**: Players collect stars to unlock new areas. For example, collecting five stars causes the guarding cat to move away, allowing access to the key room.
-- **Dynamic Backgrounds**: The game's background changes based on the system's current time for an immersive experience.
+- **Star Collection**: Players collect stars to give the CAT. Collecting five stars causes the guarding cat to move away, allowing access to the key room.
+- **Dynamic Backgrounds**: The game's background changes based on the system's current time for an immersive experience. ( +50 puanımızı isteriz :) )
 
   **Morning**
   ![WhatsApp Görsel 2024-12-27 saat 19 38 29_d1851c66](https://github.com/user-attachments/assets/059e85a0-e4ed-4daf-a78b-2fb50ddb5239)
@@ -91,13 +91,13 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 ## Enemy Behavior
 ### Mushroom
-![image](https://github.com/user-attachments/assets/016712c1-aa7a-43fa-94a3-70c99a85d8f1)
+![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
 
 - Patrols predefined paths.
 - Engages the player by chasing them and performing melee attacks upon contact.
 
 ### Flying Eye
-![image](https://github.com/user-attachments/assets/d875a1e5-479b-4478-90cc-27525a54605e)
+![Attack1](https://github.com/user-attachments/assets/9388426c-03f3-459c-80a0-3a1bff701927)
 
 - Patrols predefined paths.
 - Avoids the player when engaged.
