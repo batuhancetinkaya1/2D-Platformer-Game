@@ -43,7 +43,25 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ---
 
 ## How to Play
-1. Launch the game through the Unity Editor or the built executable.
+### Starting the Game in Unity Editor
+1. **Open the Menu Scene**:
+   - Navigate to `Assets > Scenes` and double-click on `MenuScene` to open it in the Unity Editor.
+     
+     ![image](https://github.com/user-attachments/assets/427c0f70-66eb-4ce5-bff4-d0befd1a38d7)
+
+
+
+2. **Play the Game**:
+   - In the Unity Editor, click the **Play** button (not the scene's play button).
+     
+     ![image](https://github.com/user-attachments/assets/ed04fc84-2398-4186-bf0e-c86165afd029)
+
+
+3. **Enjoy the Game**:
+   - The main menu will load, and you can begin playing.
+
+### Running the Built Game
+1. Launch the game through the Unity Editor or the built executable. If you are not familiar with Unity dont try to get built.
 2. To play the game directly, visit the following link:
    [Play on Itch.io](https://batuhancetinkaya.itch.io/2d-platformer).
 3. Navigate through levels, collect stars, defeat enemies, and unlock new areas.
