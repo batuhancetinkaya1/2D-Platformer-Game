@@ -89,12 +89,16 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 - **Dynamic Backgrounds**: The game's background changes based on the system's current time for an immersive experience. ( +50 puanımızı isteriz :) )
 
   **Morning**
+  - Between 06:00 AM - 12:00 PM
   ![WhatsApp Görsel 2024-12-27 saat 19 38 29_d1851c66](https://github.com/user-attachments/assets/059e85a0-e4ed-4daf-a78b-2fb50ddb5239)
   **Noon**
+  - Between 12:00 PM - 06:00 PM
   ![WhatsApp Görsel 2024-12-27 saat 19 38 59_c2b794b3](https://github.com/user-attachments/assets/3910c1d6-02ac-4ef6-b654-4a1df1d1cba8)
   **Evening**
+  - Between 06:00 PM - 09:00 PM
   ![WhatsApp Görsel 2024-12-27 saat 19 39 28_abcb07c3](https://github.com/user-attachments/assets/8b5fdefb-8609-4fa9-97c7-412ec8455b1b)
   **Night**
+  - Between 09:00 PM - 06:00 AM
   ![WhatsApp Görsel 2024-12-27 saat 19 39 55_3508a9a9](https://github.com/user-attachments/assets/1fc0e7ef-53ee-4620-9714-ec154bd5f06c)
 
 
