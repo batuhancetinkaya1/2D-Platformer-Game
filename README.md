@@ -67,10 +67,17 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 - **Star Collection**: Players collect stars to unlock new areas. For example, collecting five stars causes the guarding cat to move away, allowing access to the key room.
 - **Dynamic Backgrounds**: The game's background changes based on the system's current time for an immersive experience.
 
-  ![WhatsApp Görsel 2024-12-27 saat 19 39 55_3508a9a9](https://github.com/user-attachments/assets/1fc0e7ef-53ee-4620-9714-ec154bd5f06c)
-  ![WhatsApp Görsel 2024-12-27 saat 19 39 28_abcb07c3](https://github.com/user-attachments/assets/8b5fdefb-8609-4fa9-97c7-412ec8455b1b)
-  ![WhatsApp Görsel 2024-12-27 saat 19 38 59_c2b794b3](https://github.com/user-attachments/assets/3910c1d6-02ac-4ef6-b654-4a1df1d1cba8)
+  **Morning**
   ![WhatsApp Görsel 2024-12-27 saat 19 38 29_d1851c66](https://github.com/user-attachments/assets/059e85a0-e4ed-4daf-a78b-2fb50ddb5239)
+  **Noon**
+  ![WhatsApp Görsel 2024-12-27 saat 19 38 59_c2b794b3](https://github.com/user-attachments/assets/3910c1d6-02ac-4ef6-b654-4a1df1d1cba8)
+  **Evening**
+  ![WhatsApp Görsel 2024-12-27 saat 19 39 28_abcb07c3](https://github.com/user-attachments/assets/8b5fdefb-8609-4fa9-97c7-412ec8455b1b)
+  **Night**
+  ![WhatsApp Görsel 2024-12-27 saat 19 39 55_3508a9a9](https://github.com/user-attachments/assets/1fc0e7ef-53ee-4620-9714-ec154bd5f06c)
+  
+  
+  
 
 
 
@@ -84,10 +91,14 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 ## Enemy Behavior
 ### Mushroom
+![image](https://github.com/user-attachments/assets/016712c1-aa7a-43fa-94a3-70c99a85d8f1)
+
 - Patrols predefined paths.
 - Engages the player by chasing them and performing melee attacks upon contact.
 
 ### Flying Eye
+![image](https://github.com/user-attachments/assets/d875a1e5-479b-4478-90cc-27525a54605e)
+
 - Patrols predefined paths.
 - Avoids the player when engaged.
 - Attacks from a distance by shooting fireballs.
