@@ -746,8 +746,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1325da7db952e048ae7df98f84fbd17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_decisionInterval: 0.25
-  m_detectionRange: 8
+  m_decisionInterval: 0.15
+  m_detectionRange: 50
   m_idealAttackRange: 1.5
   m_blockReactionTime: 0.2
   m_blockChance: 0.5

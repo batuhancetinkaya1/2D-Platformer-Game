@@ -12,16 +12,16 @@ public class AIInputHandler : MonoBehaviour
 
     [Header("AI Settings")]
     [Tooltip("How often (in seconds) the AI decides on the next action.")]
-    [SerializeField] private float m_decisionInterval = 0.25f;
+    [SerializeField] private float m_decisionInterval = 0.15f; // Biraz daha sýk karar alsýn
 
     [Tooltip("Maximum distance at which the AI can see/detect targets.")]
-    [SerializeField] private float m_detectionRange = 8f;
+    [SerializeField] private float m_detectionRange = 500f; // Biraz artýrdýk
 
     [Tooltip("Desired range for attacking the player (melee).")]
     [SerializeField] private float m_idealAttackRange = 1.5f;
 
     [Tooltip("AI's reaction delay for blocking or reacting to attacks.")]
-    [SerializeField] private float m_blockReactionTime = 0.2f;
+    [SerializeField] private float m_blockReactionTime = 0.15f; // Biraz hýzlandýrdýk
 
     [Tooltip("Chance (0-1) that the AI might block if the target is attacking.")]
     [Range(0f, 1f)]
@@ -34,7 +34,7 @@ public class AIInputHandler : MonoBehaviour
     [Header("General Behavior Tweaks")]
     [Tooltip("Random factor for deciding if the AI tries to do combos, chase, etc.")]
     [Range(0f, 1f)]
-    [SerializeField] private float m_randomAggression = 0.5f;
+    [SerializeField] private float m_randomAggression = 0.6f;  // Biraz artýrdýk
 
     // Internal states
     private AIState m_currentState = AIState.Idle;
@@ -47,7 +47,7 @@ public class AIInputHandler : MonoBehaviour
 
     // A small cooldown for repeated actions
     private float m_actionCooldownTimer = 0f;
-    private const float ACTION_COOLDOWN = 0.2f;
+    private const float ACTION_COOLDOWN = 0.15f; // Daha sýk saldýrabilsin
 
     private void Awake()
     {
@@ -68,14 +68,14 @@ public class AIInputHandler : MonoBehaviour
 
     private void Update()
     {
-        // Only run AI if the game is active (avoid messing with states during pause/cutscene)
+        // Only run AI if the game is active
         if (GameManager.Instance.CurrentState == GameStates.GameOn ||
             GameManager.Instance.CurrentState == GameStates.FinalFight)
         {
             // Update blocking state if any
             UpdateBlockLogic();
 
-            // Update decision timer
+            // Update timers
             m_decisionTimer += Time.deltaTime;
             m_actionCooldownTimer -= Time.deltaTime;
 
@@ -87,7 +87,7 @@ public class AIInputHandler : MonoBehaviour
         }
         else
         {
-            // In other states (Respawn, GameOver, etc.), do nothing or reset
+            // In other states (Respawn, GameOver, etc.), do nothing
         }
     }
 
@@ -100,7 +100,6 @@ public class AIInputHandler : MonoBehaviour
             return;
         }
 
-        // Evaluate states
         switch (m_currentState)
         {
             case AIState.Idle:
@@ -127,41 +126,49 @@ public class AIInputHandler : MonoBehaviour
 
     private void ThinkIdle()
     {
-        // Possibly chase if the target is within detection range
         float distance = DistanceToTarget();
 
+        // Hedef, detectionRange içinde mi?
         if (distance < m_detectionRange)
         {
-            // 50% chance to chase right away; otherwise wait
-            if (UnityEngine.Random.value < 0.5f)
+            // AI, boþ durmaktansa hedefe doðru yaklaþsýn
+            // Daha agresif olsun diye random deðerini biraz yükselttik
+            if (UnityEngine.Random.value < 0.8f)
+            {
                 TransitionTo(AIState.Chase);
+            }
+        }
+        else
+        {
+            // Hedef çok uzakta deðilse bile yine kovalama þansýný biraz yükseltebiliriz
+            // Örneðin 0.3 gibi bir ihtimal daha ekleyebilirsiniz.
         }
     }
 
     private void ThinkChase()
     {
-        // Move horizontally to get close to the target
         float distance = DistanceToTarget();
 
-        if (distance > m_detectionRange)
+        // Hedef fazla uzaklaþýrsa Idle'a dön
+        // (Ya da isterseniz burada da "hedef uzakta ama yine de kovalayalým" yapabilirsiniz.)
+        if (distance > m_detectionRange + 2f)
         {
-            // Lost the target => go idle
             TransitionTo(AIState.Idle);
             return;
         }
 
-        // If we are close enough => Attack
-        if (distance <= m_idealAttackRange)
+        // Eðer ideal saldýrý aralýðýndaysak saldýr
+        if (distance <= m_idealAttackRange + 0.1f)
         {
             TransitionTo(AIState.Attack);
             return;
         }
 
-        // Else chase horizontally
+        // Hedefe doðru yönelim
         float dir = (m_target.position.x > transform.position.x) ? 1f : -1f;
         m_movement.HandleHorizontalMovement(dir);
 
-        // Possibly jump or roll if there's an obstacle or random chance
+        // Belli bir ihtimalle zýpla veya yuvarlan
         if (ShouldDodgeOrJump())
         {
             AttemptJumpOrRoll();
@@ -170,78 +177,99 @@ public class AIInputHandler : MonoBehaviour
 
     private void ThinkAttack()
     {
-        // If we are far from target, go back to chase
         float distance = DistanceToTarget();
+
+        // Mesafe açýldýysa tekrar kovalamaya dön
         if (distance > m_idealAttackRange + 0.5f)
         {
             TransitionTo(AIState.Chase);
             return;
         }
 
-        // Attack if not on cooldown
+        // Saldýrý yap (cooldown bitti mi?)
         if (m_actionCooldownTimer <= 0f)
         {
             m_combat.HandleAttack();
             m_actionCooldownTimer = ACTION_COOLDOWN;
 
-            // Chance to remain in Attack state for combos
-            if (UnityEngine.Random.value < m_randomAggression)
+            // Saldýrý sonrasý kýsa süre sonra yeni saldýrý yapma þansý
+            // m_randomAggression deðerini artýrdýk, combo yapma olasýlýðý artsýn
+            float r = UnityEngine.Random.value;
+            if (r < m_randomAggression)
             {
-                // stay in Attack, do another slash next time
+                // Ayný Attack state'te kalýp bir sonraki kararda yine saldýrabilir
+                // (Bu sayede AI peþ peþe saldýrýlar yapabilir)
             }
             else
             {
-                // maybe block or move away
-                float r = UnityEngine.Random.value;
-                if (r < 0.2f) TransitionTo(AIState.Block);
-                else if (r < 0.4f) TransitionTo(AIState.Retreat);
-                else TransitionTo(AIState.Chase);
+                // Blok veya geri çekilme veya tekrar Chase durumu
+                float r2 = UnityEngine.Random.value;
+                if (r2 < 0.3f)
+                {
+                    TransitionTo(AIState.Block);
+                }
+                else if (r2 < 0.5f)
+                {
+                    TransitionTo(AIState.Retreat);
+                }
+                else
+                {
+                    TransitionTo(AIState.Chase);
+                }
             }
         }
     }
 
     private void ThinkBlock()
     {
-        // Typically we only block for a short time or if we see the target attacking
-        // For simplicity, we do a short block and return to chase or idle
+        // Blok durumunu yönetiyoruz
+        // Bu iþi bir coroutine ile kýsa süreliðine yapýp tekrar durumu deðiþtireceðiz
         StartCoroutine(BlockBriefly());
     }
 
     private IEnumerator BlockBriefly()
     {
-        // Enter block if we’re not already
+        // Blokta deðilsek gir
         if (!m_isBlocking)
         {
             m_isBlocking = true;
             m_combat.HandleBlock(true);  // Raise shield
         }
 
-        // Block for random 0.5-1.0 seconds
-        float blockTime = UnityEngine.Random.Range(0.5f, 1.0f);
+        // 0.4-0.8 saniye blok tut
+        float blockTime = UnityEngine.Random.Range(0.4f, 0.8f);
         yield return new WaitForSeconds(blockTime);
 
+        // Bloktan çýk
         m_isBlocking = false;
         m_combat.HandleBlock(false); // Lower shield
 
-        // After blocking, maybe chase again
-        TransitionTo(AIState.Chase);
+        // Bloktan sonra rastgele bir state'e geçebilirsiniz.
+        // Örneðin tekrar saldýrý ya da chase
+        if (DistanceToTarget() <= m_idealAttackRange)
+        {
+            TransitionTo(AIState.Attack);
+        }
+        else
+        {
+            TransitionTo(AIState.Chase);
+        }
     }
 
     private void ThinkRetreat()
     {
-        // Move away from the target for a short duration
         float distance = DistanceToTarget();
         float dir = (m_target.position.x > transform.position.x) ? -1f : 1f;
         m_movement.HandleHorizontalMovement(dir);
 
-        // Possibly jump or roll away
+        // Geri çekilirken de arada zýpla/roll yapabilir
         if (ShouldDodgeOrJump())
         {
             AttemptJumpOrRoll();
         }
 
-        // If we have retreated enough, or random chance, move on
-        if (distance > m_detectionRange * 0.5f || UnityEngine.Random.value > 0.8f)
+        // Eðer belli bir mesafe açtýysak veya random bir ihtimal oluþtuysa Idle'a ya da Chase'e geçelim
+        if (distance > m_detectionRange * 0.6f || UnityEngine.Random.value > 0.7f)
         {
             TransitionTo(AIState.Idle);
         }
@@ -254,7 +282,6 @@ public class AIInputHandler : MonoBehaviour
     private void TransitionTo(AIState newState)
     {
         m_currentState = newState;
-        // Debugging / logging
         // Debug.Log("AI " + m_core.PlayerType + " => " + m_currentState);
     }
 
@@ -266,8 +293,8 @@ public class AIInputHandler : MonoBehaviour
 
     private bool ShouldDodgeOrJump()
     {
-        // Example logic: 20% chance to jump while chasing/retreating
-        return (UnityEngine.Random.value < 0.2f);
+        // Örnek: %25 ihtimalle zýpla/roll denesin
+        return (UnityEngine.Random.value < 0.25f);
     }
 
     private void AttemptJumpOrRoll()
@@ -285,27 +312,26 @@ public class AIInputHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if we should block, and sets block state if so.
-    /// You might expand this with sensors for the player's Attack animation.
+    /// Yakýn dövüþ saldýrýsý algýlama vb. için block mantýðý
     /// </summary>
     private void UpdateBlockLogic()
     {
-        // If we are already blocking or in a block state, skip
+        // Halihazýrda blok state'inde ya da blok yapýyorsak çýk
         if (m_currentState == AIState.Block || m_isBlocking) return;
 
-        // If target is in an attacking state (not shown here, but you could check e.g. their anim),
-        // there's a chance we block. We do a small reaction delay with a coroutine.
-        // (This is a placeholder, you'd need to detect if the player is attacking)
+        // Hedef çok uzaktaysa blok yapma ihtimalini kýsabilirsiniz. 
+        // Örneðin:
+        float distance = DistanceToTarget();
+        if (distance > m_idealAttackRange * 1.5f) return;
+
         bool targetIsAttacking = false;
         if (m_targetCore && m_targetCore.CombatController)
         {
-            // Hypothetical check: if they're mid-attack
-            // targetIsAttacking = m_targetCore.CombatController.IsAttacking;
-            // For now, let's just randomly say they might be attacking
-            targetIsAttacking = (UnityEngine.Random.value < 0.05f);
+            // Burada gerçekten hedefin saldýrý animasyonuna bakabilirsiniz (ör. targetCore.CombatController.IsAttacking)
+            // Biz basit bir random senaryo yapýyoruz
+            targetIsAttacking = (UnityEngine.Random.value < 0.08f);
         }
 
-        // Decide to block
         if (targetIsAttacking && UnityEngine.Random.value < m_blockChance)
         {
             StartCoroutine(BlockWithDelay(m_blockReactionTime));
@@ -315,7 +341,6 @@ public class AIInputHandler : MonoBehaviour
     private IEnumerator BlockWithDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        // Double-check we’re still in a valid situation
         if (!m_isBlocking && m_currentState != AIState.Block)
         {
             TransitionTo(AIState.Block);
@@ -323,8 +348,7 @@ public class AIInputHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Finds another player in the scene with a different PlayerType.
-    /// Adjust to your needs (PVP, multiple AI, etc.).
+    /// Bulabildiðimiz ilk farklý PlayerType'a sahip PlayerCore'u hedef al.
     /// </summary>
     private void FindTargetPlayer()
     {
@@ -352,4 +376,3 @@ public enum AIState
     Block,
     Retreat
 }
-
