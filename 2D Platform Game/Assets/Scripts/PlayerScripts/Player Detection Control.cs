@@ -32,6 +32,7 @@ public class PlayerDetectionControl : MonoBehaviour
             if (m_playerCore.RespawnController.HasKey())
             {
                 AudioManager.Instance.PlaySFX("Victory");
+                PlayerPrefs.SetString("ArenaMode", "PVB");
                 UIManager.Instance.LoadFightScene();
             }
         }
@@ -42,7 +43,7 @@ public class PlayerDetectionControl : MonoBehaviour
         }
     }
 
-    // Melee sensor boyutunu güncelleyebiliriz
+    // Melee sensor boyutunu gÃ¼ncelleyebiliriz
     public void UpdateMeleeSensorScale(int facingDir)
     {
         Transform meleeRange = transform.Find("MeleeRange");
