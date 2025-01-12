@@ -84,7 +84,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ---
 
 ## Features and Systems
-### Key Mechanics
+### Game Mechanics
 - **Star Collection**: Players collect stars to give the CAT. Collecting five stars causes the guarding cat to move away, allowing access to the key room.
 - **Dynamic Backgrounds**: The game's background changes based on the system's current time for an immersive experience. ( +50 puanımızı isteriz :) )
 
@@ -96,17 +96,12 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
   ![WhatsApp Görsel 2024-12-27 saat 19 39 28_abcb07c3](https://github.com/user-attachments/assets/8b5fdefb-8609-4fa9-97c7-412ec8455b1b)
   **Night**
   ![WhatsApp Görsel 2024-12-27 saat 19 39 55_3508a9a9](https://github.com/user-attachments/assets/1fc0e7ef-53ee-4620-9714-ec154bd5f06c)
-  
-  
-  
 
-
-
-
-- **Final Boss Fight**: The game culminates in an intense Player vs Bot showdown, with the bot using basic AI mechanics.
 
 ### Level Progression
-- **Key Mechanism**: The key must be retrieved to unlock the final door. Unlocking the final door triggers the arena fight, the last step of the game.
+- **Why Do We Need Key?**: The key must be retrieved to unlock the final door. Unlocking the final door triggers the arena fight, the last step of the game.
+
+- **Final Boss Fight**: It is the arena fight scene on Player vs Bot mode.
 
 ---
 
