@@ -28,7 +28,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
    ```
    - If you are not using Git or familiar with it, you can directly download the project as zip. After unzipping, use "2D Platformer Game" file to run on Unity.
 2. **Open the Project in Unity**:
-   - Ensure you have Unity (version 2022.3.44f1) installed.
+   - Ensure you have Unity (version 2022.3.44f1) installed. Other versions may not be competible with our game.
    - Open Unity Hub and click on `Add` > `Add project from disk`.
      
      ![image](https://github.com/user-attachments/assets/13d54304-8528-4ebb-bf33-6c46d0aa1ba9)
