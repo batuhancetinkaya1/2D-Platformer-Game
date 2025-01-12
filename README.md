@@ -137,7 +137,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ---
 
 ## Handcrafted Assets
-The key and door sprites, were carefully crafted by hand to give the game a unique and personalized aesthetic.
+The key and door assets designed by Batuhan as pixel art, to give the game a personalized touches.
 
 ### Key Sprite
 ![image](https://github.com/user-attachments/assets/66c32336-d24c-4807-8550-dfc1ef9a747f)
