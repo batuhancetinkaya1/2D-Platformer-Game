@@ -26,6 +26,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
    ```bash
    git clone https://github.com/batuhancetinkaya1/2D-Platformer-Game.git
    ```
+   - If you are not using Git or familiar with it, you can directly download the project as zip. After unzipping, use "2D Platformer Game" file to run on Unity.
 2. **Open the Project in Unity**:
    - Ensure you have Unity (version 2022.3.44f1) installed.
    - Open Unity Hub and click on `Add` > `Add project from disk`.
