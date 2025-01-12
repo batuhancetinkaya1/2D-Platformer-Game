@@ -112,8 +112,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 ## Characters
 ### Player
-![Idle](https://github.com/user-attachments/assets/6bcd5b37-6349-4061-bb73-bc470d7ca9c7)
-
+![HeroKnight](https://github.com/user-attachments/assets/192f344d-8944-42b2-a1c5-00fdb2a90ab5)
 - 
 - 
 
