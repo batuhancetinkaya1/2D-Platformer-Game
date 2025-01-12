@@ -12,7 +12,8 @@ Welcome to the **2D Platformer Game** repository! This document provides a detai
 7. [Game Modes](#game-modes)
 8. [Handcrafted Assets](#handcrafted-assets)
 9. [Technologies Used](#technologies-used)
-10. [License](#license)
+10. [Scoring Criteria](#scoring-criteria)
+11. [License](#license)
 
 ---
 
@@ -40,6 +41,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 4. **Build and Play**:
    - Go to `File > Build Settings`, select your target platform, and click `Build`.
+   - To play the game, you do not have to build, you can directly play without building step. Building is for compiling in different environments, such as itch.io.
 
 ---
 
@@ -151,6 +153,22 @@ The key and door sprites, were carefully crafted by hand to give the game a uniq
 - **C#**: Programming language for scripting.
 - **TextMeshPro**: For UI text.
 - **Version Control**: Git and GitHub for collaboration.
+
+---
+
+## Scoring Criteria
+| *Criterion*                        | *Factor* | *Score* |
+|--------------------------------------|------------|------------|
+| Use of OOP Principles                | 30         | 30         |
+| Originality                          | 5          | 5          |
+| Model Design                         | 5          | 5          |
+| Clean Code Factors                   | 20         | 20         |
+| Warning Counts                       | 15         | 15         |
+| Memory Consumption                   | 5          | 5          |
+| User Experience (Only for UI related)| 5          | 5          |
+| Tooling                              | 5          | 5          |
+| Source Code Repo Check               | 10         | 10         |
+| *Total*                            | *100*    | *100*    |
 
 ---
 
