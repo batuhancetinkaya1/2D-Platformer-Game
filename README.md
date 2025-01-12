@@ -170,7 +170,7 @@ The key and door sprites, were carefully crafted by hand to give the game a uniq
 | Source Code Repo Check               | 10         | 10         |
 | *Total*                            | *100*    | *100*    |
 
-| *Criterion*                        | *Factor* | *Score* |
+| *Extras*                        | *Factor* | *Score* |
 |--------------------------------------|------------|------------|
 | *Total*                                    | *100*    | *100*    |
 | Extra 50 for time-triggered theme change   | -          | 50          |
