@@ -5,14 +5,14 @@ public class CatController : MonoBehaviour
     private Animator animator;
     private Collider2D catCollider;
 
-    // Koşu animasyonu vb için kullandığınız değişkenler
+    // KoÃ¾u animasyonu vb iÃ§in kullandÃ½Ã°Ã½nÃ½z deÃ°iÃ¾kenler
     private bool isRunning;
 
-    // Inspector’dan ayarlayabiliriz
+    // Inspectorâ€™dan ayarlayabiliriz
     [SerializeField] private float runSpeed = 5f;
     [SerializeField] private float idleWaitTime = 5f;
 
-    // “Her animasyonun 5 katı kadar oynasın” dediğiniz factor
+    // â€œHer animasyonun 5 katÃ½ kadar oynasÃ½nâ€ dediÃ°iniz factor
     [SerializeField] private float animLoopFactor = 7.5f;
 
     private void Start()
@@ -20,13 +20,13 @@ public class CatController : MonoBehaviour
         animator = GetComponent<Animator>();
         catCollider = GetComponent<Collider2D>();
 
-        // Sürekli animasyon döngüsünü burada başlatıyoruz
+        // SÃ¼rekli animasyon dÃ¶ngÃ¼sÃ¼nÃ¼ burada baÃ¾latÃ½yoruz
         StartCoroutine(AnimationLoopCoroutine());
     }
 
     private void Update()
     {
-        // Koşma durumu vs için yine Update’te bakabiliriz
+        // KoÃ¾ma durumu vs iÃ§in yine Updateâ€™te bakabiliriz
         if (isRunning)
         {
             MoveLeft();
@@ -37,33 +37,33 @@ public class CatController : MonoBehaviour
     {
         while (true)
         {
-            // 1) Rastgele bir anim state seç (1–4 arası)
+            // 1) Rastgele bir anim state seÃ§ (1â€“4 arasÃ½)
             int randomState = Random.Range(1, 5);
             animator.SetInteger("AnimState", randomState);
 
-            // 2) O animasyonun süresini al
+            // 2) O animasyonun sÃ¼resini al
             AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
             float animDuration = info.length;
 
-            // Animasyon “5 katı” kadar dönecek
+            // Animasyon â€œ5 katÃ½â€ kadar dÃ¶necek
             float playTime = animDuration * animLoopFactor;
 
-            // 3) Bu süre kadar bekle
+            // 3) Bu sÃ¼re kadar bekle
             yield return new WaitForSeconds(playTime);
 
-            // 4) Sonra animState = -1 yap (idle’a geçsin)
+            // 4) Sonra animState = -1 yap (idleâ€™a geÃ§sin)
             animator.SetInteger("AnimState", -1);
 
-            // 5) Idle animasyonunu oynaması için belli süre bekle (idleWaitTime)
+            // 5) Idle animasyonunu oynamasÃ½ iÃ§in belli sÃ¼re bekle (idleWaitTime)
             yield return new WaitForSeconds(idleWaitTime);
 
-            // Sonra döngü başa dönecek ve tekrar rastgele state seçecek
+            // Sonra dÃ¶ngÃ¼ baÃ¾a dÃ¶necek ve tekrar rastgele state seÃ§ecek
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Player") && UIManager.Instance.StarCount() >= 0)
+        if (collision.collider.CompareTag("Player") && UIManager.Instance.StarCount() >= 5)
         {
             AudioManager.Instance.PlaySFXWithNewSource("Meow", transform.position);
             UIManager.Instance.RemoveStars(5);
