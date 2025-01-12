@@ -101,7 +101,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 All in-game assets, including the key and door sprites, were carefully crafted by hand to give the game a unique and personalized aesthetic.
 
 ### Key Sprite
-![Key Sprite](2D Platform Game/Assets/Prefabs/ImagesSprite-0002.png)
+![Key Sprite](./Assets/Prefabs/ImagesSprite-0002.png)
 
 ### Door Sprite
 ![Door Sprite](./Assets/Prefabs/Images/Sprite-0003.png)
