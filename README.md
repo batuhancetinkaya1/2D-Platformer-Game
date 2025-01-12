@@ -104,7 +104,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 - **Final Boss Fight**: The game culminates in an intense Player vs Bot showdown, with the bot using basic AI mechanics.
 
 ### Level Progression
-- **Key Mechanism**: The key must be retrieved to unlock the final door. Completing the final door triggers the arena fight, the last step of the game.
+- **Key Mechanism**: The key must be retrieved to unlock the final door. Unlocking the final door triggers the arena fight, the last step of the game.
 
 ---
 
