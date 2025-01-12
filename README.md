@@ -108,12 +108,12 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 ## Characters
 ### Player
 ![HeroKnight](https://github.com/user-attachments/assets/192f344d-8944-42b2-a1c5-00fdb2a90ab5)
-- 
+- The main character, you are playing as him.
 
 ### Cat
 ![Cat-1-Sitting](https://github.com/user-attachments/assets/5cddf9d9-4b0a-42ca-91ca-27017e2dc62f)
 
-- Waits for its stars. If you do not give the stars to the cat, it will blocks the way the key, which is required for completing the game.
+- Waits for its stars. If you do not give the stars to the cat, it blocks the way the key, which is required for completing the game.
 - Here is a map for the stars, you have to collect all (5) of them. The square shows where the cat is.
 
 ![image](https://github.com/user-attachments/assets/1769d899-46fa-4edc-b559-ac9931e8f4e4)
