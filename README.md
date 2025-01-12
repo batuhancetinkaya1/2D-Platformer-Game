@@ -41,7 +41,7 @@ The **2D Platformer Game** is an engaging Unity-based platformer featuring chall
 
 4. **Build and Play**:
    - Go to `File > Build Settings`, select your target platform, and click `Build`.
-   - To play the game, you do not have to build, you can directly play without building step. Building is for compiling in different environments, such as itch.io.
+   - To play the game, you do not have to build, you can directly play without building step. Building is for developers who wants to test the game in different platforms.
 
 ---
 
