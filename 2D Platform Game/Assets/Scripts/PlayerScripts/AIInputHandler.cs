@@ -43,7 +43,7 @@ public class AIInputHandler : MonoBehaviour
 
     // Target tracking
     private Transform m_target;
-    private PlayerCore m_targetCore;  // If your target is also a PlayerCore
+    private PlayerCore m_targetCore;  // Eðer hedef de bir PlayerCore ise
 
     // A small cooldown for repeated actions
     private float m_actionCooldownTimer = 0f;
@@ -59,23 +59,23 @@ public class AIInputHandler : MonoBehaviour
 
     private void Start()
     {
-        // Identify a valid target—e.g. another PlayerCore with different PlayerType
+        // Geçerli bir hedef belirleyelim (örneðin, farklý PlayerType'a sahip bir PlayerCore)
         FindTargetPlayer();
 
-        // Set initial state, if you want
+        // Ýlk state ayarý
         TransitionTo(AIState.Idle);
     }
 
     private void Update()
     {
-        // Only run AI if the game is active
+        // Sadece oyunun aktif olduðu durumlarda AI çalýþsýn
         if (GameManager.Instance.CurrentState == GameStates.GameOn ||
             GameManager.Instance.CurrentState == GameStates.FinalFight)
         {
-            // Update blocking state if any
+            // Blok durumunu güncelle
             UpdateBlockLogic();
 
-            // Update timers
+            // Zamanlayýcýlarý güncelle
             m_decisionTimer += Time.deltaTime;
             m_actionCooldownTimer -= Time.deltaTime;
 
@@ -85,15 +85,11 @@ public class AIInputHandler : MonoBehaviour
                 DecideNextAction();
             }
         }
-        else
-        {
-            // In other states (Respawn, GameOver, etc.), do nothing
-        }
     }
 
     private void DecideNextAction()
     {
-        // If no target found, just Idle
+        // Hedef bulunamazsa Idle state'inde kal
         if (m_target == null)
         {
             TransitionTo(AIState.Idle);
@@ -128,20 +124,14 @@ public class AIInputHandler : MonoBehaviour
     {
         float distance = DistanceToTarget();
 
-        // Hedef, detectionRange içinde mi?
+        // Eðer hedef detectionRange içindeyse, AI hedefe dönsün
         if (distance < m_detectionRange)
         {
-            // AI, boþ durmaktansa hedefe doðru yaklaþsýn
-            // Daha agresif olsun diye random deðerini biraz yükselttik
+            FaceTarget();
             if (UnityEngine.Random.value < 0.8f)
             {
                 TransitionTo(AIState.Chase);
             }
-        }
-        else
-        {
-            // Hedef çok uzakta deðilse bile yine kovalama þansýný biraz yükseltebiliriz
-            // Örneðin 0.3 gibi bir ihtimal daha ekleyebilirsiniz.
         }
     }
 
@@ -149,26 +139,28 @@ public class AIInputHandler : MonoBehaviour
     {
         float distance = DistanceToTarget();
 
-        // Hedef fazla uzaklaþýrsa Idle'a dön
-        // (Ya da isterseniz burada da "hedef uzakta ama yine de kovalayalým" yapabilirsiniz.)
+        // Hedefe doðru yönelmeden önce yüzünü hedefe döndür
+        FaceTarget();
+
+        // Hedef fazla uzaksa Idle'a dön
         if (distance > m_detectionRange + 2f)
         {
             TransitionTo(AIState.Idle);
             return;
         }
 
-        // Eðer ideal saldýrý aralýðýndaysak saldýr
+        // Eðer ideal saldýrý aralýðýndaysa saldýrýya geç
         if (distance <= m_idealAttackRange + 0.1f)
         {
             TransitionTo(AIState.Attack);
             return;
         }
 
-        // Hedefe doðru yönelim
+        // Hedefe doðru hareket et
         float dir = (m_target.position.x > transform.position.x) ? 1f : -1f;
         m_movement.HandleHorizontalMovement(dir);
 
-        // Belli bir ihtimalle zýpla veya yuvarlan
+        // Belirli bir ihtimalle zýpla veya yuvarlan
         if (ShouldDodgeOrJump())
         {
             AttemptJumpOrRoll();
@@ -179,30 +171,30 @@ public class AIInputHandler : MonoBehaviour
     {
         float distance = DistanceToTarget();
 
-        // Mesafe açýldýysa tekrar kovalamaya dön
+        // Saldýrý öncesi yüzünü hedefe çevir
+        FaceTarget();
+
+        // Mesafe açýldýysa tekrar kovalamaya geç
         if (distance > m_idealAttackRange + 0.5f)
         {
             TransitionTo(AIState.Chase);
             return;
         }
 
-        // Saldýrý yap (cooldown bitti mi?)
+        // Cooldown kontrolü ve saldýrý iþlemi
         if (m_actionCooldownTimer <= 0f)
         {
             m_combat.HandleAttack();
             m_actionCooldownTimer = ACTION_COOLDOWN;
 
-            // Saldýrý sonrasý kýsa süre sonra yeni saldýrý yapma þansý
-            // m_randomAggression deðerini artýrdýk, combo yapma olasýlýðý artsýn
+            // Saldýrý sonrasý rastgele devam kararý
             float r = UnityEngine.Random.value;
             if (r < m_randomAggression)
             {
-                // Ayný Attack state'te kalýp bir sonraki kararda yine saldýrabilir
-                // (Bu sayede AI peþ peþe saldýrýlar yapabilir)
+                // Ayný Attack state'te kalýp combo yapabilir
             }
             else
             {
-                // Blok veya geri çekilme veya tekrar Chase durumu
                 float r2 = UnityEngine.Random.value;
                 if (r2 < 0.3f)
                 {
@@ -222,30 +214,24 @@ public class AIInputHandler : MonoBehaviour
 
     private void ThinkBlock()
     {
-        // Blok durumunu yönetiyoruz
-        // Bu iþi bir coroutine ile kýsa süreliðine yapýp tekrar durumu deðiþtireceðiz
+        // Blok state'ini coroutine ile yönetiyoruz
         StartCoroutine(BlockBriefly());
     }
 
     private IEnumerator BlockBriefly()
     {
-        // Blokta deðilsek gir
         if (!m_isBlocking)
         {
             m_isBlocking = true;
-            m_combat.HandleBlock(true);  // Raise shield
+            m_combat.HandleBlock(true);  // Kalkaný kaldýr
         }
 
-        // 0.4-0.8 saniye blok tut
         float blockTime = UnityEngine.Random.Range(0.4f, 0.8f);
         yield return new WaitForSeconds(blockTime);
 
-        // Bloktan çýk
         m_isBlocking = false;
-        m_combat.HandleBlock(false); // Lower shield
+        m_combat.HandleBlock(false); // Kalkaný indir
 
-        // Bloktan sonra rastgele bir state'e geçebilirsiniz.
-        // Örneðin tekrar saldýrý ya da chase
         if (DistanceToTarget() <= m_idealAttackRange)
         {
             TransitionTo(AIState.Attack);
@@ -259,16 +245,18 @@ public class AIInputHandler : MonoBehaviour
     private void ThinkRetreat()
     {
         float distance = DistanceToTarget();
+
+        // Yüzünü hedefe döndür
+        FaceTarget();
+
         float dir = (m_target.position.x > transform.position.x) ? -1f : 1f;
         m_movement.HandleHorizontalMovement(dir);
 
-        // Geri çekilirken de arada zýpla/roll yapabilir
         if (ShouldDodgeOrJump())
         {
             AttemptJumpOrRoll();
         }
 
-        // Eðer belli bir mesafe açtýysak veya random bir ihtimal oluþtuysa Idle'a ya da Chase'e geçelim
         if (distance > m_detectionRange * 0.6f || UnityEngine.Random.value > 0.7f)
         {
             TransitionTo(AIState.Idle);
@@ -279,15 +267,42 @@ public class AIInputHandler : MonoBehaviour
     // Helpers & Utility
     //==================================================
 
+    /// <summary>
+    /// AI’nin her zaman hedefe dönmesini saðlar.
+    /// SpriteRenderer'ýn flipX ayarýný ve melee sensor yönünü (DetectionControl) günceller.
+    /// </summary>
+    private void FaceTarget()
+    {
+        if (m_target == null) return;
+
+        bool shouldFaceRight = m_target.position.x > transform.position.x;
+        // SpriteRenderer'ý alýp yönünü deðiþtiriyoruz.
+        SpriteRenderer sprite = m_core.GetComponent<SpriteRenderer>();
+        if (sprite != null)
+        {
+            if (shouldFaceRight)
+            {
+                sprite.flipX = false;
+                m_core.DetectionControl.UpdateMeleeSensorScale(1);
+            }
+            else
+            {
+                sprite.flipX = true;
+                m_core.DetectionControl.UpdateMeleeSensorScale(-1);
+            }
+        }
+    }
+
     private void TransitionTo(AIState newState)
     {
         m_currentState = newState;
-        // Debug.Log("AI " + m_core.PlayerType + " => " + m_currentState);
+        // Ýsteðe baðlý: Debug.Log("AI " + m_core.PlayerType + " => " + m_currentState);
     }
 
     private float DistanceToTarget()
     {
-        if (!m_target) return float.MaxValue;
+        if (m_target == null)
+            return float.MaxValue;
         return Vector2.Distance(transform.position, m_target.position);
     }
 
@@ -301,12 +316,10 @@ public class AIInputHandler : MonoBehaviour
     {
         if (UnityEngine.Random.value < m_rollInsteadOfJumpChance)
         {
-            // Perform a roll
             m_movement.HandleRoll();
         }
         else
         {
-            // Perform a jump
             m_movement.HandleJump();
         }
     }
@@ -316,19 +329,17 @@ public class AIInputHandler : MonoBehaviour
     /// </summary>
     private void UpdateBlockLogic()
     {
-        // Halihazýrda blok state'inde ya da blok yapýyorsak çýk
-        if (m_currentState == AIState.Block || m_isBlocking) return;
+        if (m_currentState == AIState.Block || m_isBlocking)
+            return;
 
-        // Hedef çok uzaktaysa blok yapma ihtimalini kýsabilirsiniz. 
-        // Örneðin:
         float distance = DistanceToTarget();
-        if (distance > m_idealAttackRange * 1.5f) return;
+        if (distance > m_idealAttackRange * 1.5f)
+            return;
 
         bool targetIsAttacking = false;
-        if (m_targetCore && m_targetCore.CombatController)
+        if (m_targetCore != null && m_targetCore.CombatController != null)
         {
-            // Burada gerçekten hedefin saldýrý animasyonuna bakabilirsiniz (ör. targetCore.CombatController.IsAttacking)
-            // Biz basit bir random senaryo yapýyoruz
+            // Örnek: Gerçek bir saldýrý kontrolü yerine basit bir random senaryo
             targetIsAttacking = (UnityEngine.Random.value < 0.08f);
         }
 
@@ -348,7 +359,7 @@ public class AIInputHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Bulabildiðimiz ilk farklý PlayerType'a sahip PlayerCore'u hedef al.
+    /// Ýlk bulunan farklý PlayerType'a sahip PlayerCore'u hedef alýr.
     /// </summary>
     private void FindTargetPlayer()
     {

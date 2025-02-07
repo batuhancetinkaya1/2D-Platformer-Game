@@ -2722,9 +2722,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Lorem Impsum
-
-'
+  m_text: "CREDITS\n\nCharacter Assets\nHero Knight - Pixel Art by Sven Thole\nMonsters
+    Creatures Fantasy by Luiz Melo\nPet Cats - Pixel Art Pack by Luiz Melo\nBandits
+    - Pixel Art by Ansimuz\nMedieval Warrior Pack by Est\xFAdio Vaca Roxa\n\nEnvironment
+    & Background Assets\n2D Pixel Art Platformer Biome - American Forest by Superposition
+    Principle\n\nSounds\nAdventure RPG Essentials Music Pack by CK Chris Kohler\n\nUI
+    Elements\nRPG & Fantasy Mobile GUI by bonk!\n\nPlugins & Tools\nDoTween (Animation
+    Library by Demigiant)\nTextMeshPro (by Unity Technologies)\n\nDeveloped in Unity"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2751,15 +2755,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_fontStyle: 2
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
